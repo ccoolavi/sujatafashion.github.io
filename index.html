@@ -75,38 +75,31 @@
             display: block;
         }
         
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            font-size: 1.1rem;
-            color: #666;
-        }
-        
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
         }
         
         .product-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
         }
         
         .product-image {
             width: 100%;
-            height: 250px;
+            height: 300px;
             object-fit: cover;
-            background: #f8f9fa;
+            border-bottom: 3px solid #f1f3f4;
         }
         
         .product-info {
@@ -114,10 +107,10 @@
         }
         
         .product-name {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #333;
+            margin-bottom: 0.5rem;
         }
         
         .product-description {
@@ -128,62 +121,57 @@
         }
         
         .product-price {
-            font-size: 1.1rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: #667eea;
             margin-bottom: 1rem;
         }
         
         .whatsapp-btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            background: #25d366;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px 24px;
             border-radius: 25px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            transition: background-color 0.3s ease;
         }
         
         .whatsapp-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-            text-decoration: none;
-            color: white;
+            background: #128c7e;
         }
         
-        .error-message {
-            text-align: center;
-            padding: 2rem;
-            color: #e74c3c;
-            font-size: 1.1rem;
-        }
-        
-        .no-products {
+        .loading {
             text-align: center;
             padding: 3rem;
             color: #666;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #dc3545;
+            font-size: 1.2rem;
         }
         
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-tab {
+                margin: 5px 0;
+                width: 200px;
+                text-align: center;
             }
             
             h1 {
                 font-size: 2rem;
-            }
-            
-            .nav-tab {
-                padding: 10px 20px;
-                font-size: 16px;
             }
         }
     </style>
@@ -192,174 +180,193 @@
     <header>
         <div class="container">
             <h1>Sujata Fashion</h1>
-            <p style="text-align: center; font-size: 1.2rem; margin-top: 0.5rem;">Premium Shop & Rent Collection</p>
         </div>
     </header>
     
     <div class="container">
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('shop')">Shop</button>
-            <button class="nav-tab" onclick="switchTab('rent')">Rent</button>
+            <button class="nav-tab active" onclick="showTab('sale')">Sale</button>
+            <button class="nav-tab" onclick="showTab('rental')">Rental</button>
         </div>
         
-        <div id="shop-tab" class="tab-content active">
-            <div class="loading" id="shop-loading">Loading shop products...</div>
-            <div class="products-grid" id="shop-products"></div>
+        <div id="sale-tab" class="tab-content active">
+            <div id="sale-loading" class="loading">Loading sale products...</div>
+            <div id="sale-products" class="products-grid"></div>
+            <div id="sale-error" class="error" style="display: none;">Error loading sale products. Please try again later.</div>
         </div>
         
-        <div id="rent-tab" class="tab-content">
-            <div class="loading" id="rent-loading">Loading rent products...</div>
-            <div class="products-grid" id="rent-products"></div>
+        <div id="rental-tab" class="tab-content">
+            <div id="rental-loading" class="loading">Loading rental products...</div>
+            <div id="rental-products" class="products-grid"></div>
+            <div id="rental-error" class="error" style="display: none;">Error loading rental products. Please try again later.</div>
         </div>
     </div>
     
-    <script src="excel-handler.js"></script>
     <script>
-        let allProducts = [];
-        let isDataLoaded = false;
+        // Google Sheets CSV URLs
+        const SALE_CSV_URL = 'https://docs.google.com/spreadsheets/d/1JCFYHy20f-EpJxfPCbNqUPZ2qBL3KNlJgMAQbJF2XUg/export?format=csv&gid=1717675571';
+        const RENTAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/1JCFYHy20f-EpJxfPCbNqUPZ2qBL3KNlJgMAQbJF2XUg/export?format=csv&gid=1815405474';
         
-        // Switch between tabs
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        // WhatsApp number
+        const WHATSAPP_NUMBER = '+919763416561';
+        
+        let saleProducts = [];
+        let rentalProducts = [];
+        
+        // Parse CSV data
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const products = [];
             
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(`${tabName}-tab`).classList.add('active');
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                if (values.length >= headers.length) {
+                    const product = {};
+                    headers.forEach((header, index) => {
+                        product[header] = values[index] || '';
+                    });
+                    
+                    // Only add products with required fields
+                    if (product.Name && product.Image && product.Price) {
+                        products.push(product);
+                    }
+                }
+            }
             
-            // Load products if not already loaded
-            if (isDataLoaded) {
-                displayProducts(tabName);
+            return products;
+        }
+        
+        // Fetch CSV data with CORS proxy
+        async function fetchCSVData(url) {
+            try {
+                // Try direct fetch first
+                let response = await fetch(url);
+                if (!response.ok) {
+                    // If direct fetch fails, try with CORS proxy
+                    response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                return parseCSV(csvText);
+            } catch (error) {
+                console.error('Error fetching CSV:', error);
+                throw error;
             }
         }
         
-        // Generate WhatsApp URL
-        function generateWhatsAppURL(productName, productPrice, type) {
-            const message = encodeURIComponent(
-                `Hi! I'm interested in this ${type} item:\n\n` +
-                `Product: ${productName}\n` +
-                `Price: ${productPrice}\n\n` +
-                `Please provide more details.`
-            );
-            return `https://wa.me/919763416561?text=${message}`;
+        // Create WhatsApp URL
+        function createWhatsAppURL(productName, productPrice, category) {
+            const message = `Hi! I'm interested in the ${productName} (${category}) - ${productPrice}. Please provide more details.`;
+            return `https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}?text=${encodeURIComponent(message)}`;
         }
         
         // Create product card HTML
-        function createProductCard(product, type) {
-            const imageUrl = product.imageUrl || 'https://via.placeholder.com/300x250/f8f9fa/666?text=No+Image';
-            const whatsappUrl = generateWhatsAppURL(product.name, product.price, type);
+        function createProductCard(product, category) {
+            const imageUrl = product.Image.includes('cloudinary.com') ? 
+                product.Image : 
+                `https://via.placeholder.com/300x300?text=${encodeURIComponent(product.Name)}`;
             
             return `
                 <div class="product-card">
-                    <img src="${imageUrl}" alt="${product.name}" class="product-image" 
-                         onerror="this.src='https://via.placeholder.com/300x250/f8f9fa/666?text=Image+Not+Found'">
+                    <img src="${imageUrl}" alt="${product.Name}" class="product-image" loading="lazy">
                     <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-description">${product.description || 'Beautiful fashion item from Sujata Fashion collection.'}</div>
-                        <div class="product-price">${product.price}</div>
-                        <a href="${whatsappUrl}" target="_blank" class="whatsapp-btn">
-                            📱 Inquire on WhatsApp
+                        <h3 class="product-name">${product.Name}</h3>
+                        <p class="product-description">${product.Description || 'Beautiful fashion item from Sujata Fashion'}</p>
+                        <p class="product-price">${product.Price}</p>
+                        <a href="${createWhatsAppURL(product.Name, product.Price, category)}" target="_blank">
+                            <button class="whatsapp-btn">Contact on WhatsApp</button>
                         </a>
                     </div>
                 </div>
             `;
         }
         
-        // Display products for a specific type
-        function displayProducts(type) {
-            const container = document.getElementById(`${type}-products`);
-            const loading = document.getElementById(`${type}-loading`);
-            
-            if (!container || !loading) return;
-            
-            loading.style.display = 'none';
-            
-            const filteredProducts = allProducts.filter(product => 
-                product.type && product.type.toLowerCase() === type.toLowerCase()
-            );
-            
-            if (filteredProducts.length === 0) {
-                container.innerHTML = `
-                    <div class="no-products">
-                        <h3>No ${type} products available</h3>
-                        <p>Please check back later for new arrivals!</p>
-                    </div>
-                `;
-                return;
+        // Display products
+        function displayProducts(products, containerId) {
+            const container = document.getElementById(containerId);
+            if (products.length === 0) {
+                container.innerHTML = '<div class="error">No products available at the moment.</div>';
+            } else {
+                const category = containerId.includes('sale') ? 'Sale' : 'Rental';
+                container.innerHTML = products.map(product => createProductCard(product, category)).join('');
             }
-            
-            container.innerHTML = filteredProducts
-                .map(product => createProductCard(product, type))
-                .join('');
         }
         
-        // Show error message
-        function showError(message) {
-            ['shop', 'rent'].forEach(type => {
-                const container = document.getElementById(`${type}-products`);
-                const loading = document.getElementById(`${type}-loading`);
-                
-                if (container && loading) {
-                    loading.style.display = 'none';
-                    container.innerHTML = `
-                        <div class="error-message">
-                            <h3>Error Loading Products</h3>
-                            <p>${message}</p>
-                            <p>Please try refreshing the page.</p>
-                        </div>
-                    `;
-                }
-            });
-        }
-        
-        // Initialize the application
-        async function initApp() {
+        // Load sale products
+        async function loadSaleProducts() {
             try {
-                // Check if ExcelHandler is available
-                if (typeof window.ExcelHandler === 'undefined') {
-                    throw new Error('Excel handler not loaded. Please ensure excel-handler.js is properly loaded.');
-                }
+                document.getElementById('sale-loading').style.display = 'block';
+                document.getElementById('sale-error').style.display = 'none';
                 
-                // Load products data
-                console.log('Loading products data...');
-                allProducts = await window.ExcelHandler.fetchProducts();
+                saleProducts = await fetchCSVData(SALE_CSV_URL);
+                displayProducts(saleProducts, 'sale-products');
                 
-                if (!Array.isArray(allProducts)) {
-                    throw new Error('Invalid data format received');
-                }
-                
-                console.log(`Loaded ${allProducts.length} products:`, allProducts);
-                
-                isDataLoaded = true;
-                
-                // Display shop products by default
-                displayProducts('shop');
-                
+                document.getElementById('sale-loading').style.display = 'none';
             } catch (error) {
-                console.error('Error initializing app:', error);
-                showError(error.message || 'Failed to load product data');
+                console.error('Error loading sale products:', error);
+                document.getElementById('sale-loading').style.display = 'none';
+                document.getElementById('sale-error').style.display = 'block';
             }
         }
         
-        // Initialize when DOM is loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
+        // Load rental products
+        async function loadRentalProducts() {
+            try {
+                document.getElementById('rental-loading').style.display = 'block';
+                document.getElementById('rental-error').style.display = 'none';
+                
+                rentalProducts = await fetchCSVData(RENTAL_CSV_URL);
+                displayProducts(rentalProducts, 'rental-products');
+                
+                document.getElementById('rental-loading').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading rental products:', error);
+                document.getElementById('rental-loading').style.display = 'none';
+                document.getElementById('rental-error').style.display = 'block';
+            }
         }
         
-        // Handle potential errors from excel-handler
-        window.addEventListener('error', function(e) {
-            if (e.message && e.message.includes('ExcelHandler')) {
-                console.error('Excel handler error:', e);
-                showError('Failed to load product data from Google Sheets');
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+            
+            // Load products if not already loaded
+            if (tabName === 'rental' && rentalProducts.length === 0) {
+                loadRentalProducts();
             }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load sale products immediately
+            loadSaleProducts();
         });
+        
+        // Handle image loading errors
+        document.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.target.src = `https://via.placeholder.com/300x300/667eea/ffffff?text=${encodeURIComponent('Sujata Fashion')}`;
+            }
+        }, true);
     </script>
 </body>
 </html>
