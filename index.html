@@ -6,6 +6,8 @@
     <title>Sujata Fashion Academy - Master Fashion Design</title>
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="css/main.css">
+    <!-- Google reCAPTCHA Script -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         * {
             margin: 0;
@@ -631,6 +633,45 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* reCAPTCHA Styling */
+        .g-recaptcha {
+            display: inline-block;
+            margin: 20px auto;
+        }
+
+        .form-group .g-recaptcha {
+            transform: scale(0.9);
+            transform-origin: center;
+        }
+
+        #recaptcha-container {
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        #recaptcha-container[style*="block"] {
+            opacity: 1;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .g-recaptcha {
+                transform: scale(0.8);
+                transform-origin: left;
+            }
+        }
     </style>
 </head>
 <body>
@@ -918,6 +959,12 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- reCAPTCHA Widget (hidden by default) -->
+                    <div id="recaptcha-container" class="form-group" style="text-align: center; margin: 20px 0; display: none;">
+                        <div class="g-recaptcha" data-sitekey="6Lf8vsorAAAAAJQd9uPgTMw7rWjmmLRLID9L-KR_"></div>
+                    </div>
+
                     <button type="submit" class="submit-btn">📱 Send WhatsApp Inquiry</button>
                 </form>
             </section>
@@ -1083,9 +1130,130 @@
             }
         }
 
-        // Course Inquiry
+        // Submission tracking for smart reCAPTCHA (global, applies to all inquiries)
+        let submissionTimes = [];
+        const SUBMISSION_LIMIT = 2;
+        const TIME_WINDOW = 30000; // 30 seconds
+
+        // Helper to check if reCAPTCHA should be shown
+        function shouldShowRecaptcha() {
+            const now = Date.now();
+            submissionTimes = submissionTimes.filter(time => now - time < TIME_WINDOW);
+            return submissionTimes.length >= SUBMISSION_LIMIT;
+        }
+
+        // Show reCAPTCHA widget if needed
+        function showRecaptchaIfNeeded(callback) {
+            const recaptchaContainer = document.getElementById('recaptcha-container');
+            if (shouldShowRecaptcha()) {
+                recaptchaContainer.style.display = 'block';
+                alert('For security purposes, please complete the verification below.');
+                // Wait for user to complete reCAPTCHA, then call callback
+                // Attach a temporary submit button for reCAPTCHA
+                if (!document.getElementById('recaptcha-temp-btn')) {
+                    const btn = document.createElement('button');
+                    btn.id = 'recaptcha-temp-btn';
+                    btn.type = 'button';
+                    btn.className = 'submit-btn';
+                    btn.innerText = 'Continue';
+                    btn.style.marginTop = '15px';
+                    btn.onclick = function() {
+                        const recaptchaResponse = grecaptcha.getResponse();
+                        if (!recaptchaResponse) {
+                            alert('Please complete the reCAPTCHA verification');
+                            return;
+                        }
+                        grecaptcha.reset();
+                        recaptchaContainer.style.display = 'none';
+                        btn.remove();
+                        callback(true);
+                    };
+                    recaptchaContainer.appendChild(btn);
+                }
+            } else {
+                callback(false);
+            }
+        }
+
+        // Academy Form Submission with Smart reCAPTCHA
+        function submitAcademyInquiry(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const now = Date.now();
+
+            // Clean old submission times (older than TIME_WINDOW)
+            submissionTimes = submissionTimes.filter(time => now - time < TIME_WINDOW);
+
+            // Check if reCAPTCHA is required
+            const recaptchaContainer = document.getElementById('recaptcha-container');
+            const isRecaptchaVisible = recaptchaContainer.style.display !== 'none';
+
+            if (isRecaptchaVisible) {
+                const recaptchaResponse = grecaptcha.getResponse();
+                if (!recaptchaResponse) {
+                    alert('Please complete the reCAPTCHA verification');
+                    return;
+                }
+            }
+
+            const name = formData.get('name');
+            const phone = formData.get('phone');
+            const email = formData.get('email');
+            const course = formData.get('course');
+            const preferredDate = formData.get('preferredDate');
+            const message = formData.get('message');
+
+            if (!name || !phone || !email || !course) {
+                alert('Please fill all required fields marked with *');
+                return;
+            }
+
+            // Add current submission time
+            submissionTimes.push(now);
+
+            // Check if we need to show reCAPTCHA for future submissions
+            if (shouldShowRecaptcha() && !isRecaptchaVisible) {
+                recaptchaContainer.style.display = 'block';
+                alert('For security purposes, please complete the verification below for future submissions.');
+            }
+
+            // Create WhatsApp message
+            const verificationStatus = isRecaptchaVisible ? 'reCAPTCHA Verified: Human user confirmed' : 'First-time user submission';
+            const whatsappMessage = `🎓 New Academy Inquiry from Sujata Fashion Website
+
+👤 Name: ${name}
+📱 Phone: ${phone}
+📧 Email: ${email}
+📚 Course Interest: ${course}
+${preferredDate ? `📅 Preferred Start Date: ${preferredDate}` : ''}
+
+💭 Message: ${message || 'No additional message'}
+
+✅ ${verificationStatus}
+
+Please contact this prospective student to discuss enrollment details.
+
+Sent via Sujata Fashion Academy website 🌟`;
+
+            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(whatsappMessage)}`;
+
+            // Clear form and reCAPTCHA if visible
+            form.reset();
+            if (isRecaptchaVisible) {
+                grecaptcha.reset();
+            }
+
+            alert('Thank you for your interest! Opening WhatsApp to send your inquiry...');
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Course Inquiry (now uses global reCAPTCHA logic)
         function inquireAboutCourse(courseName, duration) {
-            const message = `Hi! I'm interested in enrolling for the ${courseName} course at Sujata Fashion Academy.
+            showRecaptchaIfNeeded(function(recaptchaDone) {
+                const now = Date.now();
+                submissionTimes.push(now);
+                const message = `Hi! I'm interested in enrolling for the ${courseName} course at Sujata Fashion Academy.
 
 📚 Course: ${courseName}
 ⏰ Duration: ${duration}
@@ -1100,48 +1268,42 @@ I'm looking forward to starting my fashion journey with Sujata Fashion Academy!
 
 Thank you! 🙏`;
 
-            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
+                const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
         }
 
-        // Academy Form Submission
-        function submitAcademyInquiry(event) {
-            event.preventDefault();
+        // Product Inquiry (Shop & Rent) - now uses global reCAPTCHA logic
+        function inquireOnWhatsApp(productId, type) {
+            showRecaptchaIfNeeded(function(recaptchaDone) {
+                const now = Date.now();
+                submissionTimes.push(now);
+                const allProducts = [...shopProducts, ...rentalProducts];
+                const product = allProducts.find(p => p.id === productId);
 
-            const form = event.target;
-            const formData = new FormData(form);
+                if (!product) {
+                    alert('Product not found');
+                    return;
+                }
 
-            const name = formData.get('name');
-            const phone = formData.get('phone');
-            const email = formData.get('email');
-            const course = formData.get('course');
-            const preferredDate = formData.get('preferredDate');
-            const message = formData.get('message');
+                const actionType = type === 'rent' ? 'rent' : 'purchase';
+                const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
 
-            if (!name || !phone || !email || !course) {
-                alert('Please fill all required fields marked with *');
-                return;
-            }
+🛍️ Product: ${product.name}
+🆔 ID: ${product.id}
+💰 Price: ${formatPrice(product.price)}
+${product.securityDeposit ? `💳 Security: ${formatPrice(product.securityDeposit)}` : ''}
+📱 Category: ${product.category}
 
-            const whatsappMessage = `🎓 New Academy Inquiry from Sujata Fashion Website
+🖼️ Image: ${product.mainImage}
 
-👤 Name: ${name}
-📱 Phone: ${phone}
-📧 Email: ${email}
-📚 Course Interest: ${course}
-${preferredDate ? `📅 Preferred Start Date: ${preferredDate}` : ''}
+Could you please provide more details?
 
-💭 Message: ${message || 'No additional message'}
+Thank you! 🙏`;
 
-Please contact this prospective student to discuss enrollment details.
-
-Sent via Sujata Fashion Academy website 🌟`;
-
-            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(whatsappMessage)}`;
-            
-            form.reset();
-            alert('Thank you for your interest! Opening WhatsApp to send your inquiry...');
-            window.open(whatsappUrl, '_blank');
+                const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
         }
 
         // Shop & Rent Functions (existing functionality)
@@ -1263,16 +1425,19 @@ Sent via Sujata Fashion Academy website 🌟`;
         }
 
         function inquireOnWhatsApp(productId, type) {
-            const allProducts = [...shopProducts, ...rentalProducts];
-            const product = allProducts.find(p => p.id === productId);
-            
-            if (!product) {
-                alert('Product not found');
-                return;
-            }
-            
-            const actionType = type === 'rent' ? 'rent' : 'purchase';
-            const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
+            showRecaptchaIfNeeded(function(recaptchaDone) {
+                const now = Date.now();
+                submissionTimes.push(now);
+                const allProducts = [...shopProducts, ...rentalProducts];
+                const product = allProducts.find(p => p.id === productId);
+                
+                if (!product) {
+                    alert('Product not found');
+                    return;
+                }
+                
+                const actionType = type === 'rent' ? 'rent' : 'purchase';
+                const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
 
 🛍️ Product: ${product.name}
 🆔 ID: ${product.id}
@@ -1286,8 +1451,9 @@ Could you please provide more details?
 
 Thank you! 🙏`;
 
-            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
+                const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
         }
     </script>
 </body>
