@@ -186,6 +186,192 @@
             margin-top: 10px;
         }
         
+        /* Academy Section Styles */
+        .academy-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 40px;
+            border-radius: 12px;
+        }
+
+        .academy-subtitle {
+            font-size: 1.3em;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+
+        .hero-description h3 {
+            font-size: 1.8em;
+            margin: 20px 0 15px 0;
+        }
+
+        .hero-description p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mission-statement {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .courses-section {
+            margin-bottom: 50px;
+        }
+
+        .courses-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.4em;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .course-header h4 {
+            color: #333;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .duration {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .course-description p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .course-features p {
+            color: #555;
+            font-size: 0.9em;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .enrol-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .enrol-btn:hover {
+            background: #1ebe57;
+        }
+
+        .contact-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .contact-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .contact-form-container {
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .academy-contact-form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #1ebe57;
+        }
+
         @media (max-width: 768px) {
             .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -208,6 +394,24 @@
                 padding: 12px;
                 border-bottom: 1px solid #eee;
             }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .course-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 10px;
+            }
+
+            .academy-hero {
+                padding: 30px 15px;
+            }
+
+            .contact-section {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
@@ -218,6 +422,7 @@
     </div>
 
     <div class="container">
+        <!-- Tabs Section -->
         <div class="tabs">
             <button class="tab-button active" onclick="switchTab('shop')">
                 🛍️ Shop Now
@@ -225,17 +430,139 @@
             <button class="tab-button" onclick="switchTab('rent')">
                 👗 Rent Now
             </button>
+            <button class="tab-button" onclick="switchTab('academy')">
+                🎓 Academy
+            </button>
         </div>
 
+        <!-- Shop Content Section -->
         <div id="shop-content" class="tab-content active">
             <div id="shop-products" class="products-grid">
                 <div class="loading">Loading shop products...</div>
             </div>
         </div>
 
+        <!-- Rent Content Section -->
         <div id="rent-content" class="tab-content">
             <div id="rent-products" class="products-grid">
                 <div class="loading">Loading rental products...</div>
+            </div>
+        </div>
+
+        <!-- Academy Content Section -->
+        <div id="academy-content" class="tab-content">
+            <div class="academy-hero">
+                <h2>🎓 Sujata Fashion Academy</h2>
+                <p class="academy-subtitle">Where creativity meets craftsmanship in the art of fashion design</p>
+                <div class="hero-description">
+                    <h3>Master the Complete Art of Fashion Design with India's Most Comprehensive Program</h3>
+                    <p>With 25 years of excellence in fashion education, Sujata Fashion Academy has been nurturing creative talents and shaping successful fashion careers. Our comprehensive courses combine traditional techniques with modern design principles.</p>
+                </div>
+                <div class="mission-statement">
+                    <h4>Our Mission</h4>
+                    <p>To provide world-class fashion education that empowers students with practical skills and creative vision needed to excel in the fashion industry.</p>
+                </div>
+            </div>
+
+            <div class="courses-section">
+                <h3>🌟 Explore all our specialized courses - Click on any course to view detailed curriculum</h3>
+                <div class="courses-grid">
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h4>Fashion Design Foundation</h4>
+                            <span class="duration">⏱️ Duration: 6 Months</span>
+                        </div>
+                        <div class="course-description">
+                            <p>Perfect for beginners! Learn the fundamentals of fashion design, basic sketching, fabric knowledge, and color theory.</p>
+                        </div>
+                        <div class="course-features">
+                            <p>✓ Fashion illustration ✓ Fabric study ✓ Color theory ✓ Basic pattern making</p>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Design Foundation', '6 Months')">Enrol Now</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h4>Professional Fashion Design</h4>
+                            <span class="duration">⏱️ Duration: 1 Year</span>
+                        </div>
+                        <div class="course-description">
+                            <p>Our flagship comprehensive program covering all aspects of fashion design, pattern making, and garment construction.</p>
+                        </div>
+                        <div class="course-features">
+                            <p>✓ Advanced pattern making ✓ Draping ✓ Garment construction ✓ Fashion business</p>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Professional Fashion Design', '1 Year')">Enrol Now</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h4>Boutique Management</h4>
+                            <span class="duration">⏱️ Duration: 3 Months</span>
+                        </div>
+                        <div class="course-description">
+                            <p>Learn to run a successful fashion boutique with business management skills and customer service excellence.</p>
+                        </div>
+                        <div class="course-features">
+                            <p>✓ Business planning ✓ Customer service ✓ Inventory management ✓ Marketing</p>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Boutique Management', '3 Months')">Enrol Now</button>
+                    </div>
+
+                    <div class="course-card">
+                        <div class="course-header">
+                            <h4>Fashion Styling & Coordination</h4>
+                            <span class="duration">⏱️ Duration: 4 Months</span>
+                        </div>
+                        <div class="course-description">
+                            <p>Master the art of styling for photo shoots, events, and personal consultation services.</p>
+                        </div>
+                        <div class="course-features">
+                            <p>✓ Personal styling ✓ Photo shoot styling ✓ Event coordination ✓ Wardrobe planning</p>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Styling & Coordination', '4 Months')">Enrol Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-section">
+                <h3>📞 Ready to start your fashion journey?</h3>
+                <p>Fill out the form below or contact us directly.</p>
+                <div class="contact-form-container">
+                    <form class="academy-contact-form" onsubmit="submitAcademyInquiry(event)">
+                        <div class="form-group">
+                            <label for="student-name">Full Name *</label>
+                            <input type="text" id="student-name" name="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-phone">Phone Number *</label>
+                            <input type="tel" id="student-phone" name="phone" required placeholder="+91XXXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-email">Email Address *</label>
+                            <input type="email" id="student-email" name="email" required placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-interest">Course Interest *</label>
+                            <select id="course-interest" name="course" required>
+                                <option value="">Select a course</option>
+                                <option value="Fashion Design Foundation">Fashion Design Foundation (6 Months)</option>
+                                <option value="Professional Fashion Design">Professional Fashion Design (1 Year)</option>
+                                <option value="Boutique Management">Boutique Management (3 Months)</option>
+                                <option value="Fashion Styling & Coordination">Fashion Styling & Coordination (4 Months)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="preferred-date">Preferred Start Date</label>
+                            <input type="date" id="preferred-date" name="preferredDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="student-message">Message</label>
+                            <textarea id="student-message" name="message" rows="4" placeholder="Tell us about your fashion goals and any questions you have..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">📱 Send WhatsApp Inquiry</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -259,15 +586,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function switchTab(tab) {
+    // Update tab buttons
     document.querySelectorAll('.tab-button').forEach(btn => {
         btn.classList.remove('active');
     });
     event.target.classList.add('active');
-    
+
+    // Update tab content
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
     document.getElementById(tab + '-content').classList.add('active');
+
+    // Load products for shop/rent tabs (existing functionality)
+    if (tab === 'shop' && shopProducts.length === 0) {
+        loadShopProducts();
+    } else if (tab === 'rent' && rentalProducts.length === 0) {
+        loadRentalProducts();
+    }
 }
 
 async function loadAllProducts() {
@@ -454,6 +790,72 @@ function showError(containerId, message) {
             <button class="retry-btn" onclick="loadAllProducts()">🔄 Retry</button>
         </div>
     `;
+}
+
+// Academy Functions
+function inquireAboutCourse(courseName, duration) {
+    const message = `Hi! I'm interested in enrolling for the ${courseName} course at Sujata Fashion Academy.
+
+📚 Course: ${courseName}
+⏰ Duration: ${duration}
+
+Could you please provide more details about:
+• Course curriculum and schedule
+• Fees and payment options  
+• Admission requirements
+• Next batch start date
+
+I'm looking forward to starting my fashion journey with Sujata Fashion Academy!
+
+Thank you! 🙏`;
+
+    const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function submitAcademyInquiry(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const name = formData.get('name');
+    const phone = formData.get('phone');
+    const email = formData.get('email');
+    const course = formData.get('course');
+    const preferredDate = formData.get('preferredDate');
+    const message = formData.get('message');
+
+    // Validate required fields
+    if (!name || !phone || !email || !course) {
+        alert('Please fill all required fields marked with *');
+        return;
+    }
+
+    const whatsappMessage = `🎓 New Academy Inquiry from Sujata Fashion Website
+
+👤 Name: ${name}
+📱 Phone: ${phone}
+📧 Email: ${email}
+📚 Course Interest: ${course}
+${preferredDate ? `📅 Preferred Start Date: ${preferredDate}` : ''}
+
+💭 Message: ${message || 'No additional message'}
+
+Please contact this prospective student to discuss enrollment details and answer their questions.
+
+Sent via Sujata Fashion Academy website 🌟`;
+
+    const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(whatsappMessage)}`;
+
+    // Clear form
+    form.reset();
+
+    // Show success message
+    alert('Thank you for your interest! Opening WhatsApp to send your inquiry...');
+
+    // Open WhatsApp
+    window.open(whatsappUrl, '_blank');
 }
 </script>
 
