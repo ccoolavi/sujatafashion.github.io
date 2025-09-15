@@ -10,34 +10,40 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f8f9fa;
         }
+        
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
+        
         h1 {
             text-align: center;
             margin-bottom: 2rem;
             font-size: 2.5rem;
         }
+        
         .nav-tabs {
             display: flex;
             justify-content: center;
             margin: 2rem 0;
             border-bottom: 2px solid #e9ecef;
         }
+        
         .nav-tab {
             background: none;
             border: none;
@@ -50,95 +56,135 @@
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
         }
+        
         .nav-tab:hover {
             color: #667eea;
             background-color: #f8f9fa;
         }
+        
         .nav-tab.active {
             color: #667eea;
             border-bottom-color: #667eea;
         }
+        
         .tab-content {
             display: none;
         }
+        
         .tab-content.active {
             display: block;
         }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin: 2rem 0;
-        }
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-        }
-        .product-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-        .product-info {
-            padding: 20px;
-        }
-        .product-title {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .product-price {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-        .rent-price {
-            color: #28a745;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-        .product-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-buy {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        .btn-rent {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+        
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 2rem;
+            font-size: 1.1rem;
             color: #666;
         }
-        .error {
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+        }
+        
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .product-description {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
             text-align: center;
-            padding: 40px;
-            color: #dc3545;
+        }
+        
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: #e74c3c;
+            font-size: 1.1rem;
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-tab {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -146,81 +192,174 @@
     <header>
         <div class="container">
             <h1>Sujata Fashion</h1>
-            <p style="text-align: center; font-size: 1.2rem;">Shop Premium Fashion & Rent for Special Occasions</p>
+            <p style="text-align: center; font-size: 1.2rem; margin-top: 0.5rem;">Premium Shop & Rent Collection</p>
         </div>
     </header>
     
-    <main class="container">
-        <nav class="nav-tabs">
-            <button class="nav-tab active" data-tab="shop">Shop</button>
-            <button class="nav-tab" data-tab="rent">Rent</button>
-        </nav>
-        
-        <div class="tab-content active" id="shop-content">
-            <div class="product-grid" id="shop-products">
-                <div class="loading">Loading shop products...</div>
-            </div>
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('shop')">Shop</button>
+            <button class="nav-tab" onclick="switchTab('rent')">Rent</button>
         </div>
         
-        <div class="tab-content" id="rent-content">
-            <div class="product-grid" id="rent-products">
-                <div class="loading">Loading rental products...</div>
-            </div>
+        <div id="shop-tab" class="tab-content active">
+            <div class="loading" id="shop-loading">Loading shop products...</div>
+            <div class="products-grid" id="shop-products"></div>
         </div>
-    </main>
+        
+        <div id="rent-tab" class="tab-content">
+            <div class="loading" id="rent-loading">Loading rent products...</div>
+            <div class="products-grid" id="rent-products"></div>
+        </div>
+    </div>
     
-    <!-- Load the excel handler script -->
-    <script src="js/excel-handler.js"></script>
-    
+    <script src="excel-handler.js"></script>
     <script>
-        // Tab switching functionality
+        let allProducts = [];
+        let isDataLoaded = false;
+        
+        // Switch between tabs
         function switchTab(tabName) {
-            console.log('Switching to tab:', tabName);
-            
-            // Remove active class from all tabs and content
+            // Update tab buttons
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            
+            // Update tab content
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
             
-            // Add active class to selected tab and content
-            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
-            const activeContent = document.getElementById(`${tabName}-content`);
-            
-            if (activeTab && activeContent) {
-                activeTab.classList.add('active');
-                activeContent.classList.add('active');
-                console.log(`Successfully switched to ${tabName} tab`);
-            } else {
-                console.error(`Tab elements not found for ${tabName}`);
+            // Load products if not already loaded
+            if (isDataLoaded) {
+                displayProducts(tabName);
             }
         }
         
-        // Setup tab event listeners when DOM is ready
-        function setupTabListeners() {
-            const tabButtons = document.querySelectorAll('.nav-tab');
-            console.log('Setting up tab listeners for', tabButtons.length, 'buttons');
+        // Generate WhatsApp URL
+        function generateWhatsAppURL(productName, productPrice, type) {
+            const message = encodeURIComponent(
+                `Hi! I'm interested in this ${type} item:\n\n` +
+                `Product: ${productName}\n` +
+                `Price: ${productPrice}\n\n` +
+                `Please provide more details.`
+            );
+            return `https://wa.me/919763416561?text=${message}`;
+        }
+        
+        // Create product card HTML
+        function createProductCard(product, type) {
+            const imageUrl = product.imageUrl || 'https://via.placeholder.com/300x250/f8f9fa/666?text=No+Image';
+            const whatsappUrl = generateWhatsAppURL(product.name, product.price, type);
             
-            tabButtons.forEach((button, index) => {
-                const tabName = button.getAttribute('data-tab');
-                console.log(`Setting up tab ${index + 1}:`, tabName);
+            return `
+                <div class="product-card">
+                    <img src="${imageUrl}" alt="${product.name}" class="product-image" 
+                         onerror="this.src='https://via.placeholder.com/300x250/f8f9fa/666?text=Image+Not+Found'">
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-description">${product.description || 'Beautiful fashion item from Sujata Fashion collection.'}</div>
+                        <div class="product-price">${product.price}</div>
+                        <a href="${whatsappUrl}" target="_blank" class="whatsapp-btn">
+                            📱 Inquire on WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Display products for a specific type
+        function displayProducts(type) {
+            const container = document.getElementById(`${type}-products`);
+            const loading = document.getElementById(`${type}-loading`);
+            
+            if (!container || !loading) return;
+            
+            loading.style.display = 'none';
+            
+            const filteredProducts = allProducts.filter(product => 
+                product.type && product.type.toLowerCase() === type.toLowerCase()
+            );
+            
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <h3>No ${type} products available</h3>
+                        <p>Please check back later for new arrivals!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredProducts
+                .map(product => createProductCard(product, type))
+                .join('');
+        }
+        
+        // Show error message
+        function showError(message) {
+            ['shop', 'rent'].forEach(type => {
+                const container = document.getElementById(`${type}-products`);
+                const loading = document.getElementById(`${type}-loading`);
                 
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Tab clicked:', tabName);
-                    switchTab(tabName);
-                });
+                if (container && loading) {
+                    loading.style.display = 'none';
+                    container.innerHTML = `
+                        <div class="error-message">
+                            <h3>Error Loading Products</h3>
+                            <p>${message}</p>
+                            <p>Please try refreshing the page.</p>
+                        </div>
+                    `;
+                }
             });
         }
         
-        // Initialize tab functionality when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', setupTabListeners);
-        } else {
-            setupTabListeners();
+        // Initialize the application
+        async function initApp() {
+            try {
+                // Check if ExcelHandler is available
+                if (typeof window.ExcelHandler === 'undefined') {
+                    throw new Error('Excel handler not loaded. Please ensure excel-handler.js is properly loaded.');
+                }
+                
+                // Load products data
+                console.log('Loading products data...');
+                allProducts = await window.ExcelHandler.fetchProducts();
+                
+                if (!Array.isArray(allProducts)) {
+                    throw new Error('Invalid data format received');
+                }
+                
+                console.log(`Loaded ${allProducts.length} products:`, allProducts);
+                
+                isDataLoaded = true;
+                
+                // Display shop products by default
+                displayProducts('shop');
+                
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showError(error.message || 'Failed to load product data');
+            }
         }
+        
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+        
+        // Handle potential errors from excel-handler
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('ExcelHandler')) {
+                console.error('Excel handler error:', e);
+                showError('Failed to load product data from Google Sheets');
+            }
+        });
     </script>
 </body>
 </html>
