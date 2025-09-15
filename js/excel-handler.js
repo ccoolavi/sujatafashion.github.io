@@ -1,219 +1,294 @@
 /**
- * Excel Handler - Simple Product Data Display for Sujata Fashion
- * ============================================================
+ * Excel Handler - Google Sheets CSV Integration for Sujata Fashion
+ * ================================================================
  * 
- * This module provides immediate product data display without API calls.
- * All data is hardcoded and displays instantly when the page loads.
- * Matches the DOM structure expected by index.html
+ * This module fetches real product data from Google Sheets CSV exports
+ * and displays it with proper image loading and WhatsApp integration.
  */
-
 console.log('Excel Handler loading...');
 
-// Hardcoded product data that displays immediately
-const shopProducts = [
-  {
-    id: 1,
-    name: 'Designer Silk Saree Collection',
-    price: 2899,
-    image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-    category: 'sarees',
-    description: 'Beautiful hand-woven silk saree with intricate golden border'
-  },
-  {
-    id: 2,
-    name: 'Premium Lehenga Set',
-    price: 4599,
-    image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-    category: 'lehengas',
-    description: 'Stunning bridal lehenga with heavy embroidery work'
-  },
-  {
-    id: 3,
-    name: 'Elegant Anarkali Suit',
-    price: 3299,
-    image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-    category: 'suits',
-    description: 'Comfortable cotton anarkali with dupatta and intricate work'
-  },
-  {
-    id: 4,
-    name: 'Embroidered Kurti Collection',
-    price: 1599,
-    image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-    category: 'kurtis',
-    description: 'Stylish embroidered kurti perfect for casual and office wear'
-  },
-  {
-    id: 5,
-    name: 'Traditional Sharara Set',
-    price: 3899,
-    image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-    category: 'sharara',
-    description: 'Traditional sharara set with beautiful mirror work and embroidery'
-  },
-  {
-    id: 6,
-    name: 'Cotton Salwar Kameez',
-    price: 1899,
-    image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-    category: 'salwar',
-    description: 'Comfortable daily wear cotton salwar kameez in vibrant colors'
-  }
-];
+// Google Sheets CSV URLs with correct GID numbers
+const SHOP_CSV_URL = 'https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID/export?format=csv&gid=0';
+const RENTAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID/export?format=csv&gid=1';
 
-const rentProducts = [
-  {
-    id: 7,
-    name: 'Bridal Lehenga Premium',
-    price: 8500,
-    rentPrice: 1200,
-    image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-    category: 'bridal',
-    description: 'Heavy bridal lehenga with gold embroidery, perfect for weddings'
-  },
-  {
-    id: 8,
-    name: 'Party Wear Designer Saree',
-    price: 5200,
-    rentPrice: 800,
-    image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-    category: 'party',
-    description: 'Elegant party wear saree with sequins and beadwork'
-  },
-  {
-    id: 9,
-    name: 'Reception Gown',
-    price: 6800,
-    rentPrice: 1000,
-    image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-    category: 'gowns',
-    description: 'Stunning floor-length gown perfect for receptions and parties'
-  },
-  {
-    id: 10,
-    name: 'Wedding Guest Outfit',
-    price: 4200,
-    rentPrice: 650,
-    image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-    category: 'wedding',
-    description: 'Perfect outfit for wedding ceremonies and functions'
-  },
-  {
-    id: 11,
-    name: 'Sangeet Special Lehenga',
-    price: 7500,
-    rentPrice: 1100,
-    image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-    category: 'sangeet',
-    description: 'Vibrant lehenga perfect for sangeet and dance performances'
-  },
-  {
-    id: 12,
-    name: 'Cocktail Party Dress',
-    price: 3800,
-    rentPrice: 580,
-    image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-    category: 'cocktail',
-    description: 'Chic cocktail dress for evening parties and celebrations'
-  }
-];
+// WhatsApp configuration
+const WHATSAPP_NUMBER = '+919763416561';
 
-// Function to create product card HTML (matches index.html structure)
-function createProductCard(product, isRental = false) {
-  console.log('Creating product card for:', product.name);
-  return `
-    <div class="product-card">
-      <img src="${product.image}" alt="${product.name}" class="product-image" 
-           onerror="this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}'">
-      <div class="product-info">
-        <h3 class="product-title">${product.name}</h3>
-        <div class="product-price">
-          ₹${product.price}
-          ${product.rentPrice ? `<span class="rent-price">Rent: ₹${product.rentPrice}</span>` : ''}
+// Global variables
+let shopProducts = [];
+let rentalProducts = [];
+let isLoading = false;
+
+/**
+ * Parse CSV text into array of objects
+ */
+function parseCSV(csvText) {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    const products = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+        const product = {};
+        
+        headers.forEach((header, index) => {
+            product[header] = values[index] || '';
+        });
+        
+        // Map to expected structure
+        if (product.ProductID && product.Name_en) {
+            products.push({
+                id: parseInt(product.ProductID) || 0,
+                name: product.Name_en || 'Unnamed Product',
+                price: parseFloat(product.Price) || 0,
+                image: product.MainImage || '',
+                category: (product.Category || '').toLowerCase(),
+                description: product.Description_en || product.Name_en || 'No description available',
+                nameHi: product.Name_hi || '',
+                descriptionHi: product.Description_hi || '',
+                gallery: [
+                    product.MainImage,
+                    product.Image2,
+                    product.Image3,
+                    product.Image4,
+                    product.Image5
+                ].filter(img => img && img.trim()),
+                tags: (product.Tags || '').split(',').map(tag => tag.trim()).filter(tag => tag)
+            });
+        }
+    }
+    
+    return products;
+}
+
+/**
+ * Fetch CSV data from Google Sheets
+ */
+async function fetchCSVData(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        return parseCSV(csvText);
+    } catch (error) {
+        console.error('Error fetching CSV data:', error);
+        return [];
+    }
+}
+
+/**
+ * Load all product data
+ */
+async function loadAllProducts() {
+    if (isLoading) {
+        console.log('Already loading products...');
+        return;
+    }
+    
+    isLoading = true;
+    console.log('Loading products from Google Sheets...');
+    
+    try {
+        // Show loading state
+        showLoadingState();
+        
+        // Fetch both shop and rental data in parallel
+        const [shopData, rentalData] = await Promise.all([
+            fetchCSVData(SHOP_CSV_URL),
+            fetchCSVData(RENTAL_CSV_URL)
+        ]);
+        
+        shopProducts = shopData;
+        rentalProducts = rentalData;
+        
+        console.log(`Loaded ${shopProducts.length} shop products and ${rentalProducts.length} rental products`);
+        
+        // Display products
+        displayProducts();
+        
+    } catch (error) {
+        console.error('Error loading products:', error);
+        showErrorState();
+    } finally {
+        isLoading = false;
+    }
+}
+
+/**
+ * Show loading state in UI
+ */
+function showLoadingState() {
+    const container = document.getElementById('products-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading products from Google Sheets...</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Show error state in UI
+ */
+function showErrorState() {
+    const container = document.getElementById('products-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="error-state">
+                <p>Error loading products. Please try again later.</p>
+                <button onclick="loadAllProducts()" class="retry-btn">Retry</button>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Display products in the UI
+ */
+function displayProducts() {
+    const container = document.getElementById('products-container');
+    if (!container) {
+        console.error('Products container not found');
+        return;
+    }
+    
+    // Combine shop and rental products for display
+    const allProducts = [...shopProducts, ...rentalProducts];
+    
+    if (allProducts.length === 0) {
+        container.innerHTML = '<p class="no-products">No products available</p>';
+        return;
+    }
+    
+    container.innerHTML = allProducts.map(product => `
+        <div class="product-card" data-product-id="${product.id}">
+            <div class="product-image-container">
+                <img src="${product.image}" 
+                     alt="${product.name}" 
+                     class="product-image"
+                     onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">${product.name}</h3>
+                <p class="product-price">₹${product.price.toLocaleString()}</p>
+                <p class="product-description">${product.description}</p>
+                <div class="product-actions">
+                    <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
+                        💬 Order on WhatsApp
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="product-actions">
-          ${isRental ? 
-            `<button class="btn btn-rent" onclick="rentProduct(${product.id})">Rent Now</button>
-             <button class="btn btn-buy" onclick="buyProduct(${product.id})">Buy</button>` :
-            `<button class="btn btn-buy" onclick="buyProduct(${product.id})">Buy Now</button>`
-          }
-        </div>
-      </div>
-    </div>
-  `;
+    `).join('');
+    
+    console.log(`Displayed ${allProducts.length} products`);
 }
 
-// Function to display products in containers (matches index.html)
-function displayProducts(products, containerId, isRental = false) {
-  console.log(`Displaying ${products.length} products in ${containerId}`);
-  const container = document.getElementById(containerId);
-  if (!container) {
-    console.error(`Container ${containerId} not found!`);
-    return;
-  }
-  
-  if (products.length === 0) {
-    container.innerHTML = '<div class="error">No products available at the moment.</div>';
-    return;
-  }
-  
-  const productsHtml = products.map(product => createProductCard(product, isRental)).join('');
-  container.innerHTML = productsHtml;
-  console.log(`Successfully displayed products in ${containerId}`);
+/**
+ * Open WhatsApp with product details
+ */
+function openWhatsApp(productName, price) {
+    const message = `Hi! I'm interested in:\n${productName}\nPrice: ₹${price.toLocaleString()}\n\nCan you provide more details?`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
 }
 
-// Product interaction functions
-function buyProduct(productId) {
-  console.log('Buy product:', productId);
-  alert(`Product ${productId} added to cart! (This is a demo)`);
+/**
+ * Filter products by category
+ */
+function filterProducts(category) {
+    const allProducts = [...shopProducts, ...rentalProducts];
+    const filtered = category === 'all' ? allProducts : allProducts.filter(p => p.category === category);
+    
+    const container = document.getElementById('products-container');
+    if (container && filtered.length > 0) {
+        container.innerHTML = filtered.map(product => `
+            <div class="product-card" data-product-id="${product.id}">
+                <div class="product-image-container">
+                    <img src="${product.image}" 
+                         alt="${product.name}" 
+                         class="product-image"
+                         onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">₹${product.price.toLocaleString()}</p>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-actions">
+                        <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
+                            💬 Order on WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 }
 
-function rentProduct(productId) {
-  console.log('Rent product:', productId);
-  alert(`Product ${productId} added to rental cart! (This is a demo)`);
+/**
+ * Search products by name or description
+ */
+function searchProducts(query) {
+    if (!query.trim()) {
+        displayProducts();
+        return;
+    }
+    
+    const allProducts = [...shopProducts, ...rentalProducts];
+    const searchTerm = query.toLowerCase();
+    const filtered = allProducts.filter(product => 
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm) ||
+        product.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    );
+    
+    const container = document.getElementById('products-container');
+    if (container) {
+        if (filtered.length === 0) {
+            container.innerHTML = `<p class="no-results">No products found for "${query}"</p>`;
+        } else {
+            container.innerHTML = filtered.map(product => `
+                <div class="product-card" data-product-id="${product.id}">
+                    <div class="product-image-container">
+                        <img src="${product.image}" 
+                             alt="${product.name}" 
+                             class="product-image"
+                             onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">₹${product.price.toLocaleString()}</p>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-actions">
+                            <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
+                                💬 Order on WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
 }
 
-// Initialize function to load and display products immediately
-function initializeExcelHandler() {
-  console.log('Excel Handler initializing with immediate data display');
-  console.log('DOM ready state:', document.readyState);
-  
-  // Verify containers exist
-  const shopContainer = document.getElementById('shop-products');
-  const rentContainer = document.getElementById('rent-products');
-  
-  console.log('Shop container found:', !!shopContainer);
-  console.log('Rent container found:', !!rentContainer);
-  
-  if (shopContainer && rentContainer) {
-    // Display products immediately with hardcoded data
-    displayProducts(shopProducts, 'shop-products', false);
-    displayProducts(rentProducts, 'rent-products', true);
-    console.log('Excel Handler initialized successfully with immediate display!');
-  } else {
-    console.error('Required containers not found!');
-    // Retry after a short delay in case DOM is still loading
-    setTimeout(initializeExcelHandler, 100);
-  }
-}
-
-// Auto-initialize when DOM is ready
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  console.log('DOM still loading, waiting for DOMContentLoaded...');
-  document.addEventListener('DOMContentLoaded', initializeExcelHandler);
+    document.addEventListener('DOMContentLoaded', loadAllProducts);
 } else {
-  console.log('DOM already loaded, initializing immediately...');
-  initializeExcelHandler();
+    loadAllProducts();
 }
 
-// Export for global access
-window.excelHandler = {
-  shopProducts,
-  rentProducts,
-  displayProducts,
-  initializeExcelHandler,
-  buyProduct,
-  rentProduct
-};
+// Export functions for global use
+window.filterProducts = filterProducts;
+window.searchProducts = searchProducts;
+window.openWhatsApp = openWhatsApp;
+window.loadAllProducts = loadAllProducts;
 
-console.log('Excel Handler loaded successfully!');
+console.log('Excel Handler loaded successfully');
