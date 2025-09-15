@@ -149,123 +149,31 @@
             <p style="text-align: center; font-size: 1.2rem;">Shop Premium Fashion & Rent for Special Occasions</p>
         </div>
     </header>
-
+    
     <main class="container">
         <nav class="nav-tabs">
             <button class="nav-tab active" data-tab="shop">Shop</button>
             <button class="nav-tab" data-tab="rent">Rent</button>
         </nav>
-
-        <div id="shop-content" class="tab-content active">
-            <div id="shop-products" class="product-grid">
+        
+        <div class="tab-content active" id="shop-content">
+            <div class="product-grid" id="shop-products">
                 <div class="loading">Loading shop products...</div>
             </div>
         </div>
-
-        <div id="rent-content" class="tab-content">
-            <div id="rent-products" class="product-grid">
+        
+        <div class="tab-content" id="rent-content">
+            <div class="product-grid" id="rent-products">
                 <div class="loading">Loading rental products...</div>
             </div>
         </div>
     </main>
-
+    
+    <!-- Load the excel handler script -->
+    <script src="js/excel-handler.js"></script>
+    
     <script>
-        console.log('Script loading started');
-        
-        // Fallback product data with immediate display
-        const fallbackShopProducts = [
-            {
-                id: 1,
-                name: 'Designer Saree Collection',
-                price: 2500,
-                image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-                category: 'sarees'
-            },
-            {
-                id: 2,
-                name: 'Elegant Lehenga Set',
-                price: 4500,
-                image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-                category: 'lehengas'
-            },
-            {
-                id: 3,
-                name: 'Traditional Anarkali',
-                price: 3200,
-                image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-                category: 'suits'
-            }
-        ];
-
-        const fallbackRentProducts = [
-            {
-                id: 4,
-                name: 'Wedding Lehenga Premium',
-                price: 8000,
-                rentPrice: 1200,
-                image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=400',
-                category: 'lehengas'
-            },
-            {
-                id: 5,
-                name: 'Party Wear Saree',
-                price: 5000,
-                rentPrice: 800,
-                image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400',
-                category: 'sarees'
-            },
-            {
-                id: 6,
-                name: 'Designer Gown',
-                price: 6500,
-                rentPrice: 1000,
-                image: 'https://images.unsplash.com/photo-1583391733981-24c11ad0c90b?w=400',
-                category: 'gowns'
-            }
-        ];
-
-        function createProductCard(product, isRental = false) {
-            console.log('Creating product card for:', product.name);
-            return `
-                <div class="product-card">
-                    <img src="${product.image}" alt="${product.name}" class="product-image" 
-                         onerror="this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name)}'">
-                    <div class="product-info">
-                        <h3 class="product-title">${product.name}</h3>
-                        <div class="product-price">
-                            ₹${product.price}
-                            ${product.rentPrice ? `<span class="rent-price">Rent: ₹${product.rentPrice}</span>` : ''}
-                        </div>
-                        <div class="product-actions">
-                            ${isRental ? 
-                                `<button class="btn btn-rent" onclick="rentProduct(${product.id})">Rent Now</button>
-                                 <button class="btn btn-buy" onclick="buyProduct(${product.id})">Buy</button>` :
-                                `<button class="btn btn-buy" onclick="buyProduct(${product.id})">Buy Now</button>`
-                            }
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function displayProducts(products, containerId, isRental = false) {
-            console.log(`Displaying ${products.length} products in ${containerId}`);
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error(`Container ${containerId} not found!`);
-                return;
-            }
-            
-            if (products.length === 0) {
-                container.innerHTML = '<div class="error">No products available at the moment.</div>';
-                return;
-            }
-            
-            const productsHtml = products.map(product => createProductCard(product, isRental)).join('');
-            container.innerHTML = productsHtml;
-            console.log(`Successfully displayed products in ${containerId}`);
-        }
-
+        // Tab switching functionality
         function switchTab(tabName) {
             console.log('Switching to tab:', tabName);
             
@@ -289,45 +197,11 @@
                 console.error(`Tab elements not found for ${tabName}`);
             }
         }
-
-        function buyProduct(productId) {
-            console.log('Buy product:', productId);
-            alert(`Product ${productId} added to cart! (This is a demo)`);
-        }
-
-        function rentProduct(productId) {
-            console.log('Rent product:', productId);
-            alert(`Product ${productId} added to rental cart! (This is a demo)`);
-        }
-
-        // Initialize the application when DOM is fully loaded
-        function initializeApp() {
-            console.log('Initializing application...');
-            console.log('DOM ready state:', document.readyState);
-            
-            // Verify all required elements exist
-            const shopContainer = document.getElementById('shop-products');
-            const rentContainer = document.getElementById('rent-products');
-            const shopContent = document.getElementById('shop-content');
-            const rentContent = document.getElementById('rent-content');
-            
-            console.log('Shop container found:', !!shopContainer);
-            console.log('Rent container found:', !!rentContainer);
-            console.log('Shop content found:', !!shopContent);
-            console.log('Rent content found:', !!rentContent);
-            
-            // Display fallback products immediately
-            if (shopContainer && rentContainer) {
-                displayProducts(fallbackShopProducts, 'shop-products', false);
-                displayProducts(fallbackRentProducts, 'rent-products', true);
-            } else {
-                console.error('Required containers not found!');
-                return;
-            }
-            
-            // Setup tab event listeners with proper error handling
+        
+        // Setup tab event listeners when DOM is ready
+        function setupTabListeners() {
             const tabButtons = document.querySelectorAll('.nav-tab');
-            console.log('Found', tabButtons.length, 'tab buttons');
+            console.log('Setting up tab listeners for', tabButtons.length, 'buttons');
             
             tabButtons.forEach((button, index) => {
                 const tabName = button.getAttribute('data-tab');
@@ -339,20 +213,14 @@
                     switchTab(tabName);
                 });
             });
-            
-            console.log('Application initialization completed successfully!');
-        }
-
-        // Ensure DOM is ready before initialization
-        if (document.readyState === 'loading') {
-            console.log('DOM still loading, waiting for DOMContentLoaded...');
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            console.log('DOM already loaded, initializing immediately...');
-            initializeApp();
         }
         
-        console.log('Script loading completed');
+        // Initialize tab functionality when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupTabListeners);
+        } else {
+            setupTabListeners();
+        }
     </script>
 </body>
 </html>
