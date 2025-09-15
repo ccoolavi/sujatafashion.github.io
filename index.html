@@ -3,798 +3,1089 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sujata Fashion - Shop & Rent</title>
+    <title>Sujata Fashion Academy - Master Fashion Design</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="css/main.css">
     <style>
-        /* Enhanced Styles for Product Display */
-        body {
-            font-family: 'Arial', sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f8f9fa;
+            box-sizing: border-box;
         }
-        
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fff;
+        }
+
+        /* Main Header */
+        .main-header {
+            background: #fff; /* Changed to match logo background */
+            color: #8B0000;
+            padding: 36px 0 24px 0;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .main-header-logo {
+            height: 110px;
+            width: auto;
+            border-radius: 0;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            object-fit: contain;
+        }
+
+        .main-header-title {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 0;
+            color: #8B0000;
+            letter-spacing: 2px;
+            text-shadow: none;
+        }
+
+        .main-header-tagline {
+            font-size: 1.35em;
+            margin: 8px 0 0 0;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Academy Logo & Header */
+        .academy-header {
+            text-align: center;
+            padding: 0;
+            background: none;
+            color: inherit;
+            position: relative;
+            overflow: visible;
+            z-index: 1; /* Ensure above other elements */
+        }
+
+        .academy-intro-circle {
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+            color: white;
+            border-radius: 0 0 60px 60px/0 0 120px 120px;
+            padding: 60px 20px 60px 20px;
+            margin-bottom: 0;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .academy-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            background: #fff;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 3;
+            border: 8px solid #fff;
+            /* Fix image overlap by adding overflow hidden and centering */
+            overflow: hidden;
+        }
+
+        .academy-title {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .academy-subtitle {
+            font-size: 1.5em;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* Navigation */
+        .main-nav {
+            background: #fff;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            padding: 0 20px;
+        }
+
+        .nav-button {
+            padding: 20px 40px;
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-button.active {
+            color: #8B0000;
+            border-bottom-color: #8B0000;
+            background: rgba(139, 0, 0, 0.05);
+        }
+
+        .nav-button:hover {
+            color: #8B0000;
+            background: rgba(139, 0, 0, 0.1);
+        }
+
+        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        
-        .header {
-            text-align: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 0;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            margin: 10px 0 0 0;
-            opacity: 0.9;
-        }
-        
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #eee;
-        }
-        
-        .tab-button {
-            padding: 15px 30px;
-            background: none;
-            border: none;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #666;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-        
-        .tab-button:hover {
-            color: #667eea;
-            background-color: #f0f0f0;
-        }
-        
+
+        /* Tab Content */
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease-in;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 20px 0;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .product-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            background-color: #f0f0f0;
-        }
-        
-        .product-info {
-            padding: 20px;
-        }
-        
-        .product-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-            margin: 0 0 10px 0;
-            line-height: 1.3;
-        }
-        
-        .product-price {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #667eea;
-            margin: 10px 0;
-        }
-        
-        .product-category {
-            font-size: 0.9em;
-            color: #666;
-            background-color: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .product-description {
-            color: #666;
-            font-size: 0.95em;
-            line-height: 1.4;
-            margin-bottom: 15px;
-        }
-        
-        .whatsapp-btn {
-            background: #25D366;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
-        }
-        
-        .whatsapp-btn:hover {
-            background: #1ebe57;
-        }
-        
-        .loading, .error {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.1em;
-        }
-        
-        .loading {
-            color: #667eea;
-        }
-        
-        .error {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-            margin: 20px;
-        }
-        
-        .retry-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
+
         /* Academy Section Styles */
-        .academy-hero {
+        .hero-section {
             text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin-bottom: 40px;
-            border-radius: 12px;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin-bottom: 60px;
         }
 
-        .academy-subtitle {
+        .hero-title {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #8B0000;
+            font-weight: bold;
+        }
+
+        .hero-description {
             font-size: 1.3em;
-            margin: 15px 0;
-            opacity: 0.9;
-        }
-
-        .hero-description h3 {
-            font-size: 1.8em;
-            margin: 20px 0 15px 0;
-        }
-
-        .hero-description p {
-            font-size: 1.1em;
-            line-height: 1.6;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 30px;
+            color: #555;
+            line-height: 1.8;
         }
 
-        .mission-statement {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 8px;
+        .mission-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            margin-top: 40px;
         }
 
+        /* Courses Section */
         .courses-section {
-            margin-bottom: 50px;
+            margin-bottom: 80px;
         }
 
-        .courses-section h3 {
+        .section-title {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 1.4em;
+            font-size: 2.5em;
+            margin-bottom: 50px;
+            color: #8B0000;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #DC143C;
+            border-radius: 2px;
         }
 
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            padding: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
         }
 
         .course-card {
             background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #8B0000, #DC143C);
         }
 
         .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(139, 0, 0, 0.2);
+            border-color: #DC143C;
         }
 
-        .course-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .course-title {
+            font-size: 1.8em;
             margin-bottom: 15px;
+            color: #8B0000;
+            font-weight: bold;
         }
 
-        .course-header h4 {
-            color: #333;
-            font-size: 1.3em;
-            margin: 0;
-        }
-
-        .duration {
-            background: #667eea;
+        .course-duration {
+            background: #DC143C;
             color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 8px 16px;
+            border-radius: 25px;
             font-size: 0.9em;
-        }
-
-        .course-description p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .course-features p {
-            color: #555;
-            font-size: 0.9em;
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
+            display: inline-block;
             margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .course-description {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .course-features {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .course-features h4 {
+            color: #8B0000;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .course-features ul {
+            list-style: none;
+        }
+
+        .course-features li {
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .course-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #DC143C;
+            font-weight: bold;
         }
 
         .enrol-btn {
-            background: #25D366;
+            background: linear-gradient(135deg, #8B0000, #DC143C);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            font-size: 1em;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .enrol-btn:hover {
-            background: #1ebe57;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 0, 0, 0.3);
         }
 
-        .contact-section {
+        /* Testimonials Section */
+        .testimonials-section {
             background: #f8f9fa;
-            padding: 40px;
-            border-radius: 12px;
+            padding: 80px 20px;
+            margin: 80px -20px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
             text-align: center;
         }
 
-        .contact-section h3 {
-            color: #333;
-            margin-bottom: 10px;
+        .video-container {
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
         }
 
-        .contact-form-container {
-            max-width: 600px;
-            margin: 30px auto;
+        .video-iframe {
+            width: 100%;
+            height: 250px;
+            border: none;
+            border-radius: 15px;
         }
 
-        .academy-contact-form {
-            text-align: left;
+        .unmute-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(139, 0, 0, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .unmute-btn:hover {
+            background: rgba(139, 0, 0, 1);
+        }
+
+        .testimonial-text {
+            font-size: 1.1em;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: #8B0000;
+            font-size: 1.2em;
+        }
+
+        .testimonial-course {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin: 80px 0;
+        }
+
+        .faq-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 0 !important;
+        }
+
+        .faq-question {
+            background: #8B0000;
+            color: white;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .faq-answer {
+            padding: 20px;
+            color: #666;
+            line-height: 1.7;
+            display: none;
+            margin-bottom: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        /* Contact Form */
+        .contact-section {
+            background: linear-gradient(135deg, #8B0000, #DC143C);
+            color: white;
+            padding: 80px 40px;
+            border-radius: 20px;
+            margin: 80px 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
-            color: #333;
+            color: white;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
             font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
+            background: rgba(255,255,255,0.9);
         }
 
         .submit-btn {
-            background: #25D366;
-            color: white;
+            background: white;
+            color: #8B0000;
             border: none;
-            padding: 15px 30px;
-            border-radius: 25px;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 1.2em;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
         }
 
         .submit-btn:hover {
-            background: #1ebe57;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         }
 
+        /* Product Sections */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            background: #f8f9fa;
+        }
+
+        .product-info {
+            padding: 25px;
+        }
+
+        .product-name {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .product-price {
+            font-size: 1.5em;
+            color: #8B0000;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .whatsapp-btn, .details-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+        }
+
+        .details-btn {
+            background: #8B0000;
+            color: white;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 15px;
+            .academy-title {
+                font-size: 2.5em;
             }
-            
-            .container {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .tabs {
+
+            .nav-container {
                 flex-direction: column;
             }
-            
-            .tab-button {
-                padding: 12px;
+
+            .nav-button {
+                padding: 15px;
                 border-bottom: 1px solid #eee;
+            }
+
+            .hero-title {
+                font-size: 2em;
             }
 
             .courses-grid {
                 grid-template-columns: 1fr;
+                gap: 30px;
             }
 
-            .course-header {
-                flex-direction: column;
-                align-items: start;
-                gap: 10px;
+            .testimonials-grid {
+                grid-template-columns: 1fr;
             }
+        }
 
-            .academy-hero {
-                padding: 30px 15px;
-            }
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.2em;
+            color: #8B0000;
+        }
 
-            .contact-section {
-                padding: 30px 20px;
-            }
+        .loading::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #8B0000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🌟 Sujata Fashion 🌟</h1>
-        <p>Shop Premium Fashion & Rent for Special Occasions</p>
+    <!-- Main Header with Logo and Title -->
+    <div class="main-header">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 32px;">
+            <img src="assets/images/logo/logo.png"
+                 alt="Sujata Fashion Logo"
+                 class="main-header-logo">
+            <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
+                <h1 class="main-header-title">Sujata Fashions</h1>
+                <p class="main-header-tagline">25 Years of Crafting Designs and Designers</p>
+            </div>
+        </div>
     </div>
 
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <button class="nav-button active" onclick="switchTab('academy')">🎓 Academy</button>
+            <button class="nav-button" onclick="switchTab('shop')">🛍️ Shop</button>
+            <button class="nav-button" onclick="switchTab('rent')">👗 Rent</button>
+        </div>
+    </nav>
+
     <div class="container">
-        <!-- Tabs Section -->
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('shop')">
-                🛍️ Shop Now
-            </button>
-            <button class="tab-button" onclick="switchTab('rent')">
-                👗 Rent Now
-            </button>
-            <button class="tab-button" onclick="switchTab('academy')">
-                🎓 Academy
-            </button>
-        </div>
-
-        <!-- Shop Content Section -->
-        <div id="shop-content" class="tab-content active">
-            <div id="shop-products" class="products-grid">
-                <div class="loading">Loading shop products...</div>
-            </div>
-        </div>
-
-        <!-- Rent Content Section -->
-        <div id="rent-content" class="tab-content">
-            <div id="rent-products" class="products-grid">
-                <div class="loading">Loading rental products...</div>
-            </div>
-        </div>
-
-        <!-- Academy Content Section -->
-        <div id="academy-content" class="tab-content">
-            <div class="academy-hero">
-                <h2>🎓 Sujata Fashion Academy</h2>
-                <p class="academy-subtitle">Where creativity meets craftsmanship in the art of fashion design</p>
-                <div class="hero-description">
-                    <h3>Master the Complete Art of Fashion Design with India's Most Comprehensive Program</h3>
-                    <p>With 25 years of excellence in fashion education, Sujata Fashion Academy has been nurturing creative talents and shaping successful fashion careers. Our comprehensive courses combine traditional techniques with modern design principles.</p>
+        <!-- Academy Content (Default Active) -->
+        <div id="academy-content" class="tab-content active">
+            <!-- Academy Section Intro (clean, visually balanced, design principles applied) -->
+            <section style="
+                background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+                border-radius: 0 0 60px 60px/0 0 120px 120px;
+                color: #fff;
+                text-align: center;
+                padding: 56px 0 56px 0;
+                margin-bottom: 0;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+                position: relative;
+            ">
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    max-width: 700px;
+                    margin: 0 auto;
+                ">
+                    <img src="assets/images/logo/academy-logo.png"
+                         alt="Sujata Fashion Academy Logo"
+                         style="width: 140px; height: 140px; border-radius: 50%; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.12); border: 6px solid #fff; object-fit: contain; margin-bottom: 28px;"
+                         onerror="this.src='https://via.placeholder.com/140?text=Academy+Logo'">
+                    <h1 style="
+                        font-size: 2.7em;
+                        font-weight: bold;
+                        margin-bottom: 12px;
+                        text-shadow: 2px 2px 8px rgba(0,0,0,0.12);
+                        letter-spacing: 1px;
+                        font-family: 'Georgia', serif;
+                    ">
+                        Sujata Fashion Academy
+                    </h1>
+                    <p style="
+                        font-size: 1.25em;
+                        font-style: italic;
+                        opacity: 0.95;
+                        margin-bottom: 0;
+                        font-family: 'Georgia', serif;
+                        text-shadow: 1px 1px 4px rgba(0,0,0,0.08);
+                    ">
+                        25 Years of Fashion Education Excellence
+                    </p>
                 </div>
-                <div class="mission-statement">
-                    <h4>Our Mission</h4>
+            </section>
+            <!-- Hero Section -->
+            <section class="hero-section" data-aos="fade-up">
+                <h2 class="hero-title">Master the Complete Art of Fashion Design</h2>
+                <p class="hero-description">
+                    With 25 years of excellence in fashion education, Sujata Fashion Academy has been nurturing creative talents and shaping successful fashion careers. Our comprehensive courses combine traditional techniques with modern design principles.
+                </p>
+                <div class="mission-box">
+                    <h3 style="color: #8B0000; margin-bottom: 20px; font-size: 1.8em;">Our Mission</h3>
                     <p>To provide world-class fashion education that empowers students with practical skills and creative vision needed to excel in the fashion industry.</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="courses-section">
-                <h3>🌟 Explore all our specialized courses - Click on any course to view detailed curriculum</h3>
+            <!-- Courses Section -->
+            <section class="courses-section">
+                <h2 class="section-title" data-aos="fade-up">Our Specialized Courses</h2>
                 <div class="courses-grid">
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h4>Fashion Design Foundation</h4>
-                            <span class="duration">⏱️ Duration: 6 Months</span>
-                        </div>
-                        <div class="course-description">
-                            <p>Perfect for beginners! Learn the fundamentals of fashion design, basic sketching, fabric knowledge, and color theory.</p>
-                        </div>
+                    <!-- Professional Fashion Design -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="100">
+                        <h3 class="course-title">Professional Fashion Design</h3>
+                        <span class="course-duration">Duration: 1 Year</span>
+                        <p class="course-description">
+                            Our flagship comprehensive program covering all aspects of fashion design, pattern making, and garment construction.
+                        </p>
                         <div class="course-features">
-                            <p>✓ Fashion illustration ✓ Fabric study ✓ Color theory ✓ Basic pattern making</p>
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Advanced pattern making and draping</li>
+                                <li>Garment construction techniques</li>
+                                <li>Fashion business and entrepreneurship</li>
+                                <li>Design portfolio development</li>
+                            </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Design Foundation', '6 Months')">Enrol Now</button>
-                    </div>
-
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h4>Professional Fashion Design</h4>
-                            <span class="duration">⏱️ Duration: 1 Year</span>
-                        </div>
-                        <div class="course-description">
-                            <p>Our flagship comprehensive program covering all aspects of fashion design, pattern making, and garment construction.</p>
-                        </div>
-                        <div class="course-features">
-                            <p>✓ Advanced pattern making ✓ Draping ✓ Garment construction ✓ Fashion business</p>
-                        </div>
+                        <p style="margin-bottom: 15px;"><strong>🎓 Certificate:</strong> Industry-recognized diploma</p>
+                        <p style="margin-bottom: 20px;"><strong>💼 Career Support:</strong> Business setup guidance</p>
                         <button class="enrol-btn" onclick="inquireAboutCourse('Professional Fashion Design', '1 Year')">Enrol Now</button>
                     </div>
 
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h4>Boutique Management</h4>
-                            <span class="duration">⏱️ Duration: 3 Months</span>
-                        </div>
-                        <div class="course-description">
-                            <p>Learn to run a successful fashion boutique with business management skills and customer service excellence.</p>
-                        </div>
+                    <!-- Blouse Design -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="200">
+                        <h3 class="course-title">Blouse Design</h3>
+                        <span class="course-duration">Duration: 3 Months</span>
+                        <p class="course-description">
+                            Specialized course focusing on traditional and modern blouse design patterns for various occasions.
+                        </p>
                         <div class="course-features">
-                            <p>✓ Business planning ✓ Customer service ✓ Inventory management ✓ Marketing</p>
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Traditional blouse patterns</li>
+                                <li>Modern contemporary designs</li>
+                                <li>Fitting and alteration techniques</li>
+                                <li>Embellishment methods</li>
+                            </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Boutique Management', '3 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Blouse Design', '3 Months')">Enrol Now</button>
                     </div>
 
-                    <div class="course-card">
-                        <div class="course-header">
-                            <h4>Fashion Styling & Coordination</h4>
-                            <span class="duration">⏱️ Duration: 4 Months</span>
-                        </div>
-                        <div class="course-description">
-                            <p>Master the art of styling for photo shoots, events, and personal consultation services.</p>
-                        </div>
+                    <!-- Dress Design -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="300">
+                        <h3 class="course-title">Dress Design</h3>
+                        <span class="course-duration">Duration: 4 Months</span>
+                        <p class="course-description">
+                            Contemporary dress design techniques and trending styles for modern fashion needs.
+                        </p>
                         <div class="course-features">
-                            <p>✓ Personal styling ✓ Photo shoot styling ✓ Event coordination ✓ Wardrobe planning</p>
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Western dress patterns</li>
+                                <li>Indo-western fusion designs</li>
+                                <li>Size grading and fitting</li>
+                                <li>Trend forecasting</li>
+                            </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Styling & Coordination', '4 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Dress Design', '4 Months')">Enrol Now</button>
+                    </div>
+
+                    <!-- Aari Embroidery Basic -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="400">
+                        <h3 class="course-title">Aari Embroidery (Basic)</h3>
+                        <span class="course-duration">Duration: 2 Months</span>
+                        <p class="course-description">
+                            Learn the intricate art of Aari embroidery with traditional techniques and modern applications.
+                        </p>
+                        <div class="course-features">
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Basic Aari techniques</li>
+                                <li>Thread work and beading</li>
+                                <li>Traditional patterns</li>
+                                <li>Design planning</li>
+                            </ul>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Basic', '2 Months')">Enrol Now</button>
+                    </div>
+
+                    <!-- Aari Embroidery Advanced -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="500">
+                        <h3 class="course-title">Aari Embroidery (Advanced)</h3>
+                        <span class="course-duration">Duration: 3 Months</span>
+                        <p class="course-description">
+                            Master advanced Aari embroidery patterns and commercial applications for professional work.
+                        </p>
+                        <div class="course-features">
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Complex embroidery patterns</li>
+                                <li>Commercial design techniques</li>
+                                <li>Quality control and finishing</li>
+                                <li>Business applications</li>
+                            </ul>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Advanced', '3 Months')">Enrol Now</button>
+                    </div>
+
+                    <!-- Online Aari Embroidery -->
+                    <div class="course-card" data-aos="fade-up" data-aos-delay="600">
+                        <h3 class="course-title">Online Aari Embroidery</h3>
+                        <span class="course-duration">Duration: 6 Weeks</span>
+                        <p class="course-description">
+                            Online course with live demonstrations and practice sessions. Perfect for remote learning.
+                        </p>
+                        <div class="course-features">
+                            <h4>What You'll Learn:</h4>
+                            <ul>
+                                <li>Live online demonstrations</li>
+                                <li>Interactive practice sessions</li>
+                                <li>Personal guidance via video calls</li>
+                                <li>Digital pattern sharing</li>
+                            </ul>
+                        </div>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Aari Embroidery', '6 Weeks')">Enrol Now</button>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="contact-section">
-                <h3>📞 Ready to start your fashion journey?</h3>
-                <p>Fill out the form below or contact us directly.</p>
-                <div class="contact-form-container">
-                    <form class="academy-contact-form" onsubmit="submitAcademyInquiry(event)">
-                        <div class="form-group">
-                            <label for="student-name">Full Name *</label>
-                            <input type="text" id="student-name" name="name" required placeholder="Enter your full name">
-                        </div>
-                        <div class="form-group">
-                            <label for="student-phone">Phone Number *</label>
-                            <input type="tel" id="student-phone" name="phone" required placeholder="+91XXXXXXXXXX">
-                        </div>
-                        <div class="form-group">
-                            <label for="student-email">Email Address *</label>
-                            <input type="email" id="student-email" name="email" required placeholder="your.email@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="course-interest">Course Interest *</label>
-                            <select id="course-interest" name="course" required>
-                                <option value="">Select a course</option>
-                                <option value="Fashion Design Foundation">Fashion Design Foundation (6 Months)</option>
-                                <option value="Professional Fashion Design">Professional Fashion Design (1 Year)</option>
-                                <option value="Boutique Management">Boutique Management (3 Months)</option>
-                                <option value="Fashion Styling & Coordination">Fashion Styling & Coordination (4 Months)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="preferred-date">Preferred Start Date</label>
-                            <input type="date" id="preferred-date" name="preferredDate">
-                        </div>
-                        <div class="form-group">
-                            <label for="student-message">Message</label>
-                            <textarea id="student-message" name="message" rows="4" placeholder="Tell us about your fashion goals and any questions you have..."></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">📱 Send WhatsApp Inquiry</button>
-                    </form>
+            <!-- Testimonials Section -->
+            <section class="testimonials-section">
+                <div class="container">
+                    <h2 class="section-title" style="color: white;" data-aos="fade-up">Student Success Stories</h2>
+                    <div id="testimonials-grid" class="testimonials-grid">
+                        <div class="loading">Loading testimonials...</div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="faq-section">
+                <h2 class="section-title" data-aos="fade-up">Frequently Asked Questions</h2>
+                <div class="faq-grid" data-aos="fade-up">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">What are the prerequisites for joining?</div>
+                        <div class="faq-answer">No prior experience required. Basic education (10th pass) is preferred. Passion for fashion and creativity is most important.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">Do you provide certificates?</div>
+                        <div class="faq-answer">Yes, we provide completion certificates for all our courses. Our diploma course certificate is recognized in the fashion industry.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">What is the batch size?</div>
+                        <div class="faq-answer">We maintain small batch sizes (8-12 students) to ensure personalized attention and hands-on learning experience.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">Do you help with business setup?</div>
+                        <div class="faq-answer">We provide guidance for setting up your own business and connect you with our network of alumni and industry contacts.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">Can I take multiple courses?</div>
+                        <div class="faq-answer">Yes, you can combine courses. We offer flexible scheduling and discounts for multiple course enrollments.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Form -->
+            <section class="contact-section" data-aos="fade-up">
+                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">Ready to Start Your Fashion Journey?</h2>
+                <p style="text-align: center; font-size: 1.3em;">Fill out the form below or contact us directly.</p>
+                <form class="academy-contact-form" onsubmit="submitAcademyInquiry(event)">
+                    <div class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" name="name" required placeholder="Enter your full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number *</label>
+                                <input type="tel" name="phone" required placeholder="+91XXXXXXXXXX">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address *</label>
+                                <input type="email" name="email" required placeholder="your.email@example.com">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label>Course Interest *</label>
+                                <select name="course" required>
+                                    <option value="">Select a course</option>
+                                    <option value="Professional Fashion Design">Professional Fashion Design (1 Year)</option>
+                                    <option value="Blouse Design">Blouse Design (3 Months)</option>
+                                    <option value="Dress Design">Dress Design (4 Months)</option>
+                                    <option value="Aari Embroidery Basic">Aari Embroidery Basic (2 Months)</option>
+                                    <option value="Aari Embroidery Advanced">Aari Embroidery Advanced (3 Months)</option>
+                                    <option value="Online Aari Embroidery">Online Aari Embroidery (6 Weeks)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Preferred Start Date</label>
+                                <input type="date" name="preferredDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea name="message" rows="4" placeholder="Tell us about your fashion goals..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">📱 Send WhatsApp Inquiry</button>
+                </form>
+            </section>
+        </div>
+
+        <!-- Shop Content -->
+        <div id="shop-content" class="tab-content">
+            <section data-aos="fade-up">
+                <h2 class="section-title">Designer Fashion Shop</h2>
+                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">Premium quality designer outfits crafted with excellence</p>
+                <div id="shop-products" class="products-grid">
+                    <div class="loading">Loading shop products...</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Rent Content -->
+        <div id="rent-content" class="tab-content">
+            <section data-aos="fade-up">
+                <h2 class="section-title">Premium Rental Collection</h2>
+                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">Exquisite outfits for your special occasions</p>
+                <div id="rent-products" class="products-grid">
+                    <div class="loading">Loading rental products...</div>
+                </div>
+            </section>
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-// Google Sheets API Configuration
-const API_KEY = 'AIzaSyAWWpa4xPGR8aBWKqSq0oKOp6a0XELijh0';
-const SPREADSHEET_ID = '1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms';
-const WHATSAPP_NUMBER = '+919763416561';
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true
+        });
 
-const SALE_RANGE = 'Sale!A:U';      
-const RENTAL_RANGE = 'Rental!A:V';   
+        // Google Sheets API Configuration
+        const API_KEY = 'AIzaSyAWWpa4xPGR8aBWKqSq0oKOp6a0XELijh0';
+        const SPREADSHEET_ID = '1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms';
+        const WHATSAPP_NUMBER = '+919763416561';
 
-let shopProducts = [];
-let rentalProducts = [];
-let isLoading = false;
+        let shopProducts = [];
+        let rentalProducts = [];
+        let testimonials = [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Sujata Fashion - Loading products from Google Sheets');
-    loadAllProducts();
-});
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+        });
 
-function switchTab(tab) {
-    // Update tab buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tab + '-content').classList.add('active');
 
-    // Update tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    document.getElementById(tab + '-content').classList.add('active');
-
-    // Load products for shop/rent tabs (existing functionality)
-    if (tab === 'shop' && shopProducts.length === 0) {
-        loadShopProducts();
-    } else if (tab === 'rent' && rentalProducts.length === 0) {
-        loadRentalProducts();
-    }
-}
-
-async function loadAllProducts() {
-    if (isLoading) return;
-    isLoading = true;
-    
-    try {
-        await Promise.all([
-            loadShopProducts(),
-            loadRentalProducts()
-        ]);
-    } catch (error) {
-        console.error('Error loading products:', error);
-    } finally {
-        isLoading = false;
-    }
-}
-
-async function loadShopProducts() {
-    try {
-        const data = await fetchSheetData(SALE_RANGE);
-        shopProducts = parseProductData(data, 'shop');
-        displayProducts(shopProducts, 'shop-products');
-        console.log(`✅ Loaded ${shopProducts.length} shop products`);
-    } catch (error) {
-        console.error('Error loading shop products:', error);
-        showError('shop-products', 'Failed to load shop products');
-    }
-}
-
-async function loadRentalProducts() {
-    try {
-        const data = await fetchSheetData(RENTAL_RANGE);
-        rentalProducts = parseProductData(data, 'rent');
-        displayProducts(rentalProducts, 'rent-products');
-        console.log(`✅ Loaded ${rentalProducts.length} rental products`);
-    } catch (error) {
-        console.error('Error loading rental products:', error);
-        showError('rent-products', 'Failed to load rental products');
-    }
-}
-
-async function fetchSheetData(range) {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    const result = await response.json();
-    return result.values || [];
-}
-
-function parseProductData(data, type) {
-    if (!data || data.length < 2) return [];
-    
-    const rows = data.slice(1);
-    const products = [];
-    
-    rows.forEach((row, index) => {
-        if (!row || row.length === 0) return;
-        
-        let product = {};
-        
-        if (type === 'shop') {
-            product = {
-                id: row[0],           // Column A: ProductID
-                name: row[1],         // Column B: Name_en
-                category: row[5],     // Column F: Category_en
-                price: row[8],        // Column I: Price
-                description: row[9],  // Column J: Description_en
-                mainImage: row[12],   // Column M: MainImage
-                type: type
-            };
-        } else if (type === 'rent') {
-            product = {
-                id: row[0],           // Column A: ProductID
-                name: row[1],         // Column B: Name_en
-                category: row[5],     // Column F: Category_en
-                price: row[8],        // Column I: RentalPrice
-                securityDeposit: row[9], // Column J: SecurityDeposit
-                description: row[10], // Column K: Description_en
-                mainImage: row[13],   // Column N: MainImage (FIXED!)
-                type: type
-            };
+            // Load data if needed
+            if (tab === 'shop' && shopProducts.length === 0) {
+                loadShopProducts();
+            } else if (tab === 'rent' && rentalProducts.length === 0) {
+                loadRentalProducts();
+            }
         }
-        
-        if (!product.id || !product.name) return;
-        products.push(product);
-    });
-    
-    return products;
-}
 
-function displayProducts(products, containerId) {
-    const container = document.getElementById(containerId);
-    
-    if (!products || products.length === 0) {
-        container.innerHTML = '<div class="error">No products available at the moment</div>';
-        return;
-    }
-    
-    container.innerHTML = products.map(product => `
-        <div class="product-card" onclick="openProductDetails('${product.id}', '${product.type}')">
-            <img 
-                src="${product.mainImage}" 
-                alt="${product.name}"
-                class="product-image"
-                onerror="this.src='https://via.placeholder.com/300x400?text=No+Image+Available'"
-            >
-            <div class="product-info">
-                <div class="product-category">${product.category}</div>
-                <h3 class="product-name">${product.name}</h3>
-                <div class="product-price">
-                    ${formatPrice(product.price)}
-                    ${product.securityDeposit ? `<br><small>Security: ${formatPrice(product.securityDeposit)}</small>` : ''}
-                </div>
-                <p class="product-description">${truncateText(product.description, 80)}</p>
-                <div class="product-actions" style="display: flex; gap: 8px; margin-top: 10px;">
-                    <button class="view-details-btn" onclick="event.stopPropagation(); openProductDetails('${product.id}', '${product.type}')" style="flex: 1; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 15px; font-size: 0.9em;">
-                        👁️ Details
-                    </button>
-                    <button class="whatsapp-btn" onclick="event.stopPropagation(); inquireOnWhatsApp('${product.id}', '${product.type}')" style="flex: 1; padding: 8px 12px; background: #25D366; color: white; border: none; border-radius: 15px; font-size: 0.9em;">
-                        💬 WhatsApp
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    console.log(`✨ Displayed ${products.length} products in ${containerId}`);
-}
+        // Load All Data
+        async function loadAllData() {
+            try {
+                await Promise.all([
+                    loadTestimonials(),
+                    loadShopProducts(),
+                    loadRentalProducts()
+                ]);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
 
-function formatPrice(price) {
-    if (!price || price === '0') return 'Price on Request';
-    const cleanPrice = price.toString().replace(/[^\d.,]/g, '');
-    const numericPrice = parseFloat(cleanPrice.replace(',', ''));
-    if (isNaN(numericPrice)) return price;
-    return `₹${numericPrice.toLocaleString('en-IN')}`;
-}
+        // Load Testimonials
+        async function loadTestimonials() {
+            try {
+                const data = await fetchSheetData('Testimonials!A:I');
+                testimonials = parseTestimonials(data);
+                displayTestimonials(testimonials);
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+            }
+        }
 
-function truncateText(text, maxLength) {
-    if (!text || text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-}
+        function parseTestimonials(data) {
+            if (!data || data.length < 2) return [];
+            
+            const rows = data.slice(1);
+            return rows.map(row => ({
+                id: row[0],
+                name: row[1],
+                course: row[2],
+                review: row[5],
+                videoUrl: row[8]
+            })).filter(t => t.name && t.videoUrl);
+        }
 
-function openProductDetails(productId, type) {
-    console.log('🔍 Opening product details for:', productId, type);
-    window.location.href = `product.html?id=${productId}&type=${type}`;
-}
+        function displayTestimonials(testimonials) {
+            const container = document.getElementById('testimonials-grid');
+            
+            if (!testimonials || testimonials.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: white;">No testimonials available at the moment.</p>';
+                return;
+            }
 
-function inquireOnWhatsApp(productId, type) {
-    const allProducts = [...shopProducts, ...rentalProducts];
-    const product = allProducts.find(p => p.id === productId);
-    
-    if (!product) {
-        alert('Product not found');
-        return;
-    }
-    
-    const actionType = type === 'rent' ? 'rent' : 'purchase';
-    const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
+            container.innerHTML = testimonials.map(testimonial => {
+                const videoId = extractYouTubeId(testimonial.videoUrl);
+                return `
+                    <div class="testimonial-card" data-aos="fade-up">
+                        <div class="video-container">
+                            <iframe class="video-iframe" 
+                                    src="https://www.youtube.com/embed/${videoId}?mute=1&autoplay=0&controls=1" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+                            <button class="unmute-btn" onclick="unmuteVideo(this)">🔊 Unmute</button>
+                        </div>
+                        <p class="testimonial-text">"${testimonial.review}"</p>
+                        <div class="testimonial-author">${testimonial.name}</div>
+                        <div class="testimonial-course">${testimonial.course}</div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-🛍️ Product: ${product.name}
-🆔 ID: ${product.id}
-💰 Price: ${formatPrice(product.price)}
-${product.securityDeposit ? `💳 Security: ${formatPrice(product.securityDeposit)}` : ''}
-📱 Category: ${product.category}
+        function extractYouTubeId(url) {
+            const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+            return match ? match[1] : '';
+        }
 
-🖼️ Image: ${product.mainImage}
+        function unmuteVideo(btn) {
+            const iframe = btn.parentElement.querySelector('.video-iframe');
+            const currentSrc = iframe.src;
+            iframe.src = currentSrc.replace('mute=1', 'mute=0');
+            btn.style.display = 'none';
+        }
 
-Could you please provide more details?
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const isOpen = answer.style.display === 'block';
+            
+            // Close all FAQ answers
+            document.querySelectorAll('.faq-answer').forEach(ans => {
+                ans.style.display = 'none';
+            });
+            
+            // Toggle current answer
+            if (!isOpen) {
+                answer.style.display = 'block';
+            }
+        }
 
-Thank you! 🙏`;
-
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-}
-
-function showError(containerId, message) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = `
-        <div class="error">
-            <h3>⚠️ ${message}</h3>
-            <button class="retry-btn" onclick="loadAllProducts()">🔄 Retry</button>
-        </div>
-    `;
-}
-
-// Academy Functions
-function inquireAboutCourse(courseName, duration) {
-    const message = `Hi! I'm interested in enrolling for the ${courseName} course at Sujata Fashion Academy.
+        // Course Inquiry
+        function inquireAboutCourse(courseName, duration) {
+            const message = `Hi! I'm interested in enrolling for the ${courseName} course at Sujata Fashion Academy.
 
 📚 Course: ${courseName}
 ⏰ Duration: ${duration}
@@ -809,30 +1100,30 @@ I'm looking forward to starting my fashion journey with Sujata Fashion Academy!
 
 Thank you! 🙏`;
 
-    const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
-}
+            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
 
-function submitAcademyInquiry(event) {
-    event.preventDefault();
+        // Academy Form Submission
+        function submitAcademyInquiry(event) {
+            event.preventDefault();
 
-    const form = event.target;
-    const formData = new FormData(form);
+            const form = event.target;
+            const formData = new FormData(form);
 
-    const name = formData.get('name');
-    const phone = formData.get('phone');
-    const email = formData.get('email');
-    const course = formData.get('course');
-    const preferredDate = formData.get('preferredDate');
-    const message = formData.get('message');
+            const name = formData.get('name');
+            const phone = formData.get('phone');
+            const email = formData.get('email');
+            const course = formData.get('course');
+            const preferredDate = formData.get('preferredDate');
+            const message = formData.get('message');
 
-    // Validate required fields
-    if (!name || !phone || !email || !course) {
-        alert('Please fill all required fields marked with *');
-        return;
-    }
+            if (!name || !phone || !email || !course) {
+                alert('Please fill all required fields marked with *');
+                return;
+            }
 
-    const whatsappMessage = `🎓 New Academy Inquiry from Sujata Fashion Website
+            const whatsappMessage = `🎓 New Academy Inquiry from Sujata Fashion Website
 
 👤 Name: ${name}
 📱 Phone: ${phone}
@@ -842,23 +1133,162 @@ ${preferredDate ? `📅 Preferred Start Date: ${preferredDate}` : ''}
 
 💭 Message: ${message || 'No additional message'}
 
-Please contact this prospective student to discuss enrollment details and answer their questions.
+Please contact this prospective student to discuss enrollment details.
 
 Sent via Sujata Fashion Academy website 🌟`;
 
-    const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(whatsappMessage)}`;
+            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(whatsappMessage)}`;
+            
+            form.reset();
+            alert('Thank you for your interest! Opening WhatsApp to send your inquiry...');
+            window.open(whatsappUrl, '_blank');
+        }
 
-    // Clear form
-    form.reset();
+        // Shop & Rent Functions (existing functionality)
+        async function fetchSheetData(range) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            const result = await response.json();
+            return result.values || [];
+        }
 
-    // Show success message
-    alert('Thank you for your interest! Opening WhatsApp to send your inquiry...');
+        async function loadShopProducts() {
+            try {
+                const data = await fetchSheetData('Sale!A:U');
+                shopProducts = parseProductData(data, 'shop');
+                displayProducts(shopProducts, 'shop-products');
+            } catch (error) {
+                console.error('Error loading shop products:', error);
+            }
+        }
 
-    // Open WhatsApp
-    window.open(whatsappUrl, '_blank');
-}
-</script>
+        async function loadRentalProducts() {
+            try {
+                const data = await fetchSheetData('Rental!A:V');
+                rentalProducts = parseProductData(data, 'rent');
+                displayProducts(rentalProducts, 'rent-products');
+            } catch (error) {
+                console.error('Error loading rental products:', error);
+            }
+        }
 
+        function parseProductData(data, type) {
+            if (!data || data.length < 2) return [];
+            
+            const rows = data.slice(1);
+            const products = [];
+            
+            rows.forEach(row => {
+                if (!row || row.length === 0) return;
+                
+                let product = {};
+                
+                if (type === 'shop') {
+                    product = {
+                        id: row[0],
+                        name: row[1],
+                        category: row[5],
+                        price: row[8],
+                        description: row[9],
+                        mainImage: row[12],
+                        type: type
+                    };
+                } else if (type === 'rent') {
+                    product = {
+                        id: row[0],
+                        name: row[1],
+                        category: row[5],
+                        price: row[8],
+                        securityDeposit: row[9],
+                        description: row[10],
+                        mainImage: row[13],
+                        type: type
+                    };
+                }
+                
+                if (!product.id || !product.name) return;
+                products.push(product);
+            });
+            
+            return products;
+        }
 
+        function displayProducts(products, containerId) {
+            const container = document.getElementById(containerId);
+            if (!products || products.length === 0) {
+                container.innerHTML = '<div class="loading">No products available</div>';
+                return;
+            }
+            container.innerHTML = products.map(product => `
+                <div class="product-card" data-aos="fade-up">
+                    <img src="${product.mainImage}" alt="${product.name}" class="product-image"
+                         onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+                    <div class="product-info">
+                        <div style="background: #8B0000; color: white; padding: 5px 10px; border-radius: 15px; display: inline-block; font-size: 0.9em; margin-bottom: 10px;">${product.category}</div>
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">
+                            ${formatPrice(product.price)}
+                            ${product.securityDeposit ? `<br><small>Security: ${formatPrice(product.securityDeposit)}</small>` : ''}
+                        </div>
+                        <p style="color: #666; margin-bottom: 20px;">${truncateText(product.description, 80)}</p>
+                        <div class="product-actions">
+                            <button class="details-btn" onclick="openProductDetails('${product.id}', '${product.type}')">
+                                👁️ Details
+                            </button>
+                            <button class="whatsapp-btn" onclick="inquireOnWhatsApp('${product.id}', '${product.type}')">
+                                💬 WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatPrice(price) {
+            if (!price || price === '0') return 'Price on Request';
+            const cleanPrice = price.toString().replace(/[^\d.,]/g, '');
+            const numericPrice = parseFloat(cleanPrice.replace(',', ''));
+            if (isNaN(numericPrice)) return price;
+            return `₹${numericPrice.toLocaleString('en-IN')}`;
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text || text.length <= maxLength) return text;
+            return text.substring(0, maxLength).trim() + '...';
+        }
+
+        function openProductDetails(productId, type) {
+            window.location.href = `product.html?id=${productId}&type=${type}`;
+        }
+
+        function inquireOnWhatsApp(productId, type) {
+            const allProducts = [...shopProducts, ...rentalProducts];
+            const product = allProducts.find(p => p.id === productId);
+            
+            if (!product) {
+                alert('Product not found');
+                return;
+            }
+            
+            const actionType = type === 'rent' ? 'rent' : 'purchase';
+            const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
+
+🛍️ Product: ${product.name}
+🆔 ID: ${product.id}
+💰 Price: ${formatPrice(product.price)}
+${product.securityDeposit ? `💳 Security: ${formatPrice(product.securityDeposit)}` : ''}
+📱 Category: ${product.category}
+
+🖼️ Image: ${product.mainImage}
+
+Could you please provide more details?
+
+Thank you! 🙏`;
+
+            const whatsappUrl = `https://wa.me/919763416561?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
 </body>
 </html>
