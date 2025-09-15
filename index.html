@@ -241,240 +241,238 @@
     </div>
 
     <script>
-        // Google Sheets API Configuration
-        const API_KEY = 'AIzaSyAWWpa4xPGR8aBWKqSq0oKOp6a0XELijh0';
-        const SPREADSHEET_ID = '1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms';
-        const WHATSAPP_NUMBER = '+919763416561';
+// Google Sheets API Configuration
+const API_KEY = 'AIzaSyAWWpa4xPGR8aBWKqSq0oKOp6a0XELijh0';
+const SPREADSHEET_ID = '1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms';
+const WHATSAPP_NUMBER = '+919763416561';
+
+// Sheet ranges
+const SALE_RANGE = 'Sale!A:U';      // Sale tab columns A to U
+const RENTAL_RANGE = 'Rental!A:V';   // Rental tab columns A to V
+
+let shopProducts = [];
+let rentalProducts = [];
+let isLoading = false;
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Sujata Fashion - Loading products from Google Sheets');
+    loadAllProducts();
+});
+
+// Switch between tabs
+function switchTab(tab) {
+    // Update tab buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(tab + '-content').classList.add('active');
+    
+    // Load products if not already loaded
+    if (tab === 'shop' && shopProducts.length === 0) {
+        loadShopProducts();
+    } else if (tab === 'rent' && rentalProducts.length === 0) {
+        loadRentalProducts();
+    }
+}
+
+// Load all products
+async function loadAllProducts() {
+    if (isLoading) return;
+    isLoading = true;
+    
+    try {
+        await Promise.all([
+            loadShopProducts(),
+            loadRentalProducts()
+        ]);
+    } catch (error) {
+        console.error('Error loading products:', error);
+    } finally {
+        isLoading = false;
+    }
+}
+
+// Load shop products
+async function loadShopProducts() {
+    try {
+        console.log('📦 Loading shop products...');
+        const data = await fetchSheetData(SALE_RANGE);
+        shopProducts = parseProductData(data, 'shop');
+        displayProducts(shopProducts, 'shop-products');
+        console.log(`✅ Loaded ${shopProducts.length} shop products`);
+    } catch (error) {
+        console.error('Error loading shop products:', error);
+        showError('shop-products', 'Failed to load shop products');
+    }
+}
+
+// Load rental products  
+async function loadRentalProducts() {
+    try {
+        console.log('🏠 Loading rental products...');
+        const data = await fetchSheetData(RENTAL_RANGE);
+        rentalProducts = parseProductData(data, 'rent');
+        displayProducts(rentalProducts, 'rent-products');
+        console.log(`✅ Loaded ${rentalProducts.length} rental products`);
+    } catch (error) {
+        console.error('Error loading rental products:', error);
+        showError('rent-products', 'Failed to load rental products');
+    }
+}
+
+// Fetch data from Google Sheets API v4
+async function fetchSheetData(range) {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
+    
+    console.log('🌐 Fetching from:', url);
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    return result.values || [];
+}
+
+// Parse product data from sheets - CORRECTED COLUMN MAPPING
+function parseProductData(data, type) {
+    if (!data || data.length < 2) return [];
+    
+    const headers = data[0];
+    const rows = data.slice(1);
+    const products = [];
+    
+    console.log('📊 Parsing data for:', type);
+    console.log('📊 Headers:', headers);
+    
+    rows.forEach((row, index) => {
+        if (!row || row.length === 0) return;
         
-        // Sheet ranges
-        const SALE_RANGE = 'Sale!A:U';      // Sale tab columns A to U
-        const RENTAL_RANGE = 'Rental!A:V';   // Rental tab columns A to V
+        // CORRECT COLUMN MAPPING based on your actual spreadsheet structure
+        const productId = row[0];    // Column A: ProductID
+        const nameEn = row[1];       // Column B: Name_en
+        const nameHi = row[2];       // Column C: Name_hi  
+        const nameMr = row[3];       // Column D: Name_mr
+        const categoryEn = row[5];   // Column F: Category_en
+        const price = row[8];        // Column I: Price
+        const descriptionEn = row[9]; // Column J: Description_en
+        const mainImage = row[12];   // Column M: MainImage
+        const whatsappMsg = row[18]; // Column S: WhatsAppMessage
+        const inStock = row[19];     // Column T: InStock
+        const tags = row[20];        // Column U: Tags
         
-        let shopProducts = [];
-        let rentalProducts = [];
-        let isLoading = false;
+        // Skip empty rows
+        if (!productId || !nameEn) return;
+        
+        const product = {
+            id: productId,
+            name: nameEn || 'Unnamed Product',
+            nameHi: nameHi || '',
+            nameMr: nameMr || '',
+            category: categoryEn || 'Fashion',
+            price: price || '0',
+            description: descriptionEn || 'Beautiful fashion item from Sujata Fashion',
+            image: mainImage || 'https://via.placeholder.com/300x400?text=No+Image',
+            whatsappMessage: whatsappMsg || '',
+            inStock: inStock || 'Yes',
+            tags: tags || '',
+            type: type
+        };
+        
+        products.push(product);
+    });
+    
+    return products;
+}
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Sujata Fashion - Loading products from Google Sheets');
-            loadAllProducts();
-        });
+// Display products in grid
+function displayProducts(products, containerId) {
+    const container = document.getElementById(containerId);
+    
+    if (!products || products.length === 0) {
+        container.innerHTML = '<div class="error">No products available at the moment</div>';
+        return;
+    }
+    
+    container.innerHTML = products.map(product => `
+        <div class="product-card" onclick="openProductDetails('${product.id}', '${product.type}')">
+            <img 
+                src="${product.image}" 
+                alt="${product.name}"
+                class="product-image"
+                onerror="this.src='https://via.placeholder.com/300x400?text=No+Image+Available'"
+            >
+            <div class="product-info">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-name">${product.name}</h3>
+                <div class="product-price">${formatPrice(product.price)}</div>
+                <p class="product-description">${truncateText(product.description, 80)}</p>
+                <button class="whatsapp-btn" onclick="event.stopPropagation(); inquireOnWhatsApp('${product.id}', '${product.type}')">
+                    💬 WhatsApp Inquiry
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    console.log(`✨ Displayed ${products.length} products in ${containerId}`);
+}
 
-        // Switch between tabs
-        function switchTab(tab) {
-            // Update tab buttons
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tab + '-content').classList.add('active');
-            
-            // Load products if not already loaded
-            if (tab === 'shop' && shopProducts.length === 0) {
-                loadShopProducts();
-            } else if (tab === 'rent' && rentalProducts.length === 0) {
-                loadRentalProducts();
-            }
-        }
+// Format price display
+function formatPrice(price) {
+    if (!price || price === '0') return 'Price on Request';
+    
+    // Handle prices like "₹7,990"
+    const cleanPrice = price.toString().replace(/[^\d.,]/g, '');
+    const numericPrice = parseFloat(cleanPrice.replace(',', ''));
+    
+    if (isNaN(numericPrice)) return price;
+    
+    return `₹${numericPrice.toLocaleString('en-IN')}`;
+}
 
-        // Load all products
-        async function loadAllProducts() {
-            if (isLoading) return;
-            isLoading = true;
-            
-            try {
-                await Promise.all([
-                    loadShopProducts(),
-                    loadRentalProducts()
-                ]);
-            } catch (error) {
-                console.error('Error loading products:', error);
-            } finally {
-                isLoading = false;
-            }
-        }
+// Truncate text for display
+function truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+}
 
-        // Load shop products
-        async function loadShopProducts() {
-            try {
-                console.log('📦 Loading shop products...');
-                const data = await fetchSheetData(SALE_RANGE);
-                shopProducts = parseProductData(data, 'shop');
-                displayProducts(shopProducts, 'shop-products');
-                console.log(`✅ Loaded ${shopProducts.length} shop products`);
-            } catch (error) {
-                console.error('Error loading shop products:', error);
-                showError('shop-products', 'Failed to load shop products');
-            }
-        }
+// Open product details (for future product page)
+function openProductDetails(productId, type) {
+    console.log('🔍 Opening product details for:', productId, type);
+    // Future: Navigate to product.html?id=${productId}&type=${type}
+    // For now, just show WhatsApp inquiry
+    inquireOnWhatsApp(productId, type);
+}
 
-        // Load rental products  
-        async function loadRentalProducts() {
-            try {
-                console.log('🏠 Loading rental products...');
-                const data = await fetchSheetData(RENTAL_RANGE);
-                rentalProducts = parseProductData(data, 'rent');
-                displayProducts(rentalProducts, 'rent-products');
-                console.log(`✅ Loaded ${rentalProducts.length} rental products`);
-            } catch (error) {
-                console.error('Error loading rental products:', error);
-                showError('rent-products', 'Failed to load rental products');
-            }
-        }
-
-        // Fetch data from Google Sheets API v4
-        async function fetchSheetData(range) {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
-            
-            console.log('🌐 Fetching from:', url);
-            
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
-            return result.values || [];
-        }
-
-        // Parse product data from sheets
-        function parseProductData(data, type) {
-            if (!data || data.length < 2) return [];
-            
-            const headers = data[0];
-            const rows = data.slice(1);
-            const products = [];
-            
-            console.log('📊 Parsing data. Headers:', headers);
-            console.log('📊 First row sample:', rows[0]);
-            
-            rows.forEach((row, index) => {
-                if (!row || row.length === 0) return;
-                
-                // Map columns based on your spreadsheet structure
-                const productId = row[0]; // Column A: ProductID
-                const nameEn = row[1];    // Column B: Name_en
-                const nameHi = row[2];    // Column C: Name_hi  
-                const nameMr = row[3];    // Column D: Name_mr
-                const category = row[4];  // Column E: Category1
-                const price = type === 'rent' ? row[8] : row[8]; // Column I: Price/RentalPrice
-                const securityDeposit = type === 'rent' ? row[9] : null; // Column J: SecurityDeposit (rent only)
-                const descriptionEn = type === 'rent' ? row[10] : row[9]; // Description column varies
-                const mainImage = type === 'rent' ? row[13] : row[12]; // MainImage column
-                const whatsappMsg = type === 'rent' ? row[18] : row[17]; // WhatsApp message column
-                const availability = type === 'rent' ? row[19] : row[18]; // Availability column
-                
-                // Skip empty rows
-                if (!productId || !nameEn) return;
-                
-                const product = {
-                    id: productId,
-                    name: nameEn || 'Unnamed Product',
-                    nameHi: nameHi || '',
-                    nameMr: nameMr || '',
-                    category: category || 'Fashion',
-                    price: price || '0',
-                    securityDeposit: securityDeposit,
-                    description: descriptionEn || 'Beautiful fashion item from Sujata Fashion',
-                    image: mainImage || 'https://via.placeholder.com/300x400?text=No+Image',
-                    whatsappMessage: whatsappMsg || '',
-                    availability: availability || 'Available',
-                    type: type
-                };
-                
-                products.push(product);
-            });
-            
-            return products;
-        }
-
-        // Display products in grid
-        function displayProducts(products, containerId) {
-            const container = document.getElementById(containerId);
-            
-            if (!products || products.length === 0) {
-                container.innerHTML = '<div class="error">No products available at the moment</div>';
-                return;
-            }
-            
-            container.innerHTML = products.map(product => `
-                <div class="product-card" onclick="openProductDetails('${product.id}', '${product.type}')">
-                    <img 
-                        src="${product.image}" 
-                        alt="${product.name}"
-                        class="product-image"
-                        onerror="this.src='https://via.placeholder.com/300x400?text=No+Image+Available'"
-                    >
-                    <div class="product-info">
-                        <div class="product-category">${product.category}</div>
-                        <h3 class="product-name">${product.name}</h3>
-                        <div class="product-price">
-                            ${formatPrice(product.price)}
-                            ${product.securityDeposit ? `<br><small>Security: ${formatPrice(product.securityDeposit)}</small>` : ''}
-                        </div>
-                        <p class="product-description">${truncateText(product.description, 80)}</p>
-                        <button class="whatsapp-btn" onclick="event.stopPropagation(); inquireOnWhatsApp('${product.id}', '${product.type}')">
-                            💬 WhatsApp Inquiry
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-            
-            console.log(`✨ Displayed ${products.length} products in ${containerId}`);
-        }
-
-        // Format price display
-        function formatPrice(price) {
-            if (!price || price === '0') return 'Price on Request';
-            
-            // Remove any existing currency symbols and clean the price
-            const cleanPrice = price.toString().replace(/[^\d.,]/g, '');
-            const numericPrice = parseFloat(cleanPrice.replace(',', ''));
-            
-            if (isNaN(numericPrice)) return price;
-            
-            return `₹${numericPrice.toLocaleString('en-IN')}`;
-        }
-
-        // Truncate text for display
-        function truncateText(text, maxLength) {
-            if (!text || text.length <= maxLength) return text;
-            return text.substring(0, maxLength).trim() + '...';
-        }
-
-        // Open product details (for future product page)
-        function openProductDetails(productId, type) {
-            console.log('🔍 Opening product details for:', productId, type);
-            // Future: Navigate to product.html?id=${productId}&type=${type}
-            // For now, just show WhatsApp inquiry
-            inquireOnWhatsApp(productId, type);
-        }
-
-        // WhatsApp inquiry function
-        function inquireOnWhatsApp(productId, type) {
-            const allProducts = [...shopProducts, ...rentalProducts];
-            const product = allProducts.find(p => p.id === productId);
-            
-            if (!product) {
-                alert('Product not found');
-                return;
-            }
-            
-            const actionType = type === 'rent' ? 'rent' : 'purchase';
-            const priceText = product.securityDeposit ? 
-                `Rental: ${formatPrice(product.price)}, Security: ${formatPrice(product.securityDeposit)}` :
-                `Price: ${formatPrice(product.price)}`;
-            
-            const message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
+// WhatsApp inquiry function - REAL INTEGRATION
+function inquireOnWhatsApp(productId, type) {
+    const allProducts = [...shopProducts, ...rentalProducts];
+    const product = allProducts.find(p => p.id === productId);
+    
+    if (!product) {
+        alert('Product not found');
+        return;
+    }
+    
+    // Use the pre-formatted WhatsApp message from spreadsheet if available
+    let message = product.whatsappMessage;
+    
+    // If no pre-formatted message, create a standard one
+    if (!message || message === 'NA') {
+        const actionType = type === 'rent' ? 'rent' : 'purchase';
+        message = `Hi! I'm interested in this ${actionType} item from Sujata Fashion:
 
 🛍️ Product: ${product.name}
 🆔 ID: ${product.id}
-💰 ${priceText}
+💰 Price: ${formatPrice(product.price)}
 📱 Category: ${product.category}
 
 ${product.image ? `🖼️ Image: ${product.image}` : ''}
@@ -482,34 +480,36 @@ ${product.image ? `🖼️ Image: ${product.image}` : ''}
 Could you please provide more details and availability?
 
 Thank you! 🙏`;
+    }
 
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
-            
-            console.log('📱 Opening WhatsApp:', whatsappUrl);
-            window.open(whatsappUrl, '_blank');
-        }
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+    
+    console.log('📱 Opening WhatsApp:', whatsappUrl);
+    window.open(whatsappUrl, '_blank');
+}
 
-        // Show error message
-        function showError(containerId, message) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = `
-                <div class="error">
-                    <h3>⚠️ ${message}</h3>
-                    <p>Please check your internet connection and try again.</p>
-                    <button class="retry-btn" onclick="loadAllProducts()">🔄 Retry</button>
-                </div>
-            `;
-        }
+// Show error message
+function showError(containerId, message) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = `
+        <div class="error">
+            <h3>⚠️ ${message}</h3>
+            <p>Please check your internet connection and try again.</p>
+            <button class="retry-btn" onclick="loadAllProducts()">🔄 Retry</button>
+        </div>
+    `;
+}
 
-        // Global error handler
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-        });
+// Global error handler
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error);
+});
 
-        // Handle unhandled promise rejections
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Unhandled promise rejection:', e.reason);
-        });
-    </script>
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+});
+</script>
+
 </body>
 </html>
