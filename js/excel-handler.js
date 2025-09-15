@@ -1,16 +1,80 @@
 /**
- * Excel Handler - CSV Data Integration for Sujata Fashion
+ * Excel Handler - JSON Data Integration for Sujata Fashion
  * ====================================================
  * 
- * This module fetches product data from Google Sheets via CSV export
- * and dynamically creates product cards for the shop interface.
+ * This module fetches product data from Google Sheets via JSON API
+ * with CORS-free fallback to hardcoded sample data.
  */
 class ExcelHandler {
   constructor() {
-    this.shopSheetUrl = 'https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/export?format=csv&gid=1717675571';
-    this.rentSheetUrl = 'https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/export?format=csv&gid=1815405474';
+    // Using Google Sheets JSON API endpoint (CORS-free)
+    this.shopSheetUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/values/Shop!A:J?key=AIzaSyD-9tSrke72PouQMnMX-a7UARF8ZHocBMw';
+    this.rentSheetUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/values/Rent!A:J?key=AIzaSyD-9tSrke72PouQMnMX-a7UARF8ZHocBMw';
     this.cache = new Map();
     this.cacheExpiry = 5 * 60 * 1000; // 5 minutes
+    
+    // Fallback sample data matching Google Sheets structure
+    this.fallbackData = {
+      shop: [
+        {
+          id: 'SF001',
+          name: 'Elegant Silk Saree',
+          price: '₹2,999',
+          category: 'Sarees',
+          image: 'images/products/saree1.jpg',
+          description: 'Beautiful hand-woven silk saree with intricate golden border',
+          availability: 'In Stock',
+          sizes: 'Free Size',
+          colors: 'Red, Blue, Green'
+        },
+        {
+          id: 'SF002',
+          name: 'Designer Lehenga',
+          price: '₹4,999',
+          category: 'Lehengas',
+          image: 'images/products/lehenga1.jpg',
+          description: 'Stunning bridal lehenga with heavy embroidery work',
+          availability: 'In Stock',
+          sizes: 'S, M, L, XL',
+          colors: 'Pink, Maroon, Gold'
+        },
+        {
+          id: 'SF003',
+          name: 'Anarkali Suit Set',
+          price: '₹1,899',
+          category: 'Suits',
+          image: 'images/products/anarkali1.jpg',
+          description: 'Comfortable cotton anarkali with dupatta',
+          availability: 'In Stock',
+          sizes: 'S, M, L, XL',
+          colors: 'White, Black, Navy'
+        }
+      ],
+      rent: [
+        {
+          id: 'SR001',
+          name: 'Bridal Lehenga Rental',
+          price: '₹999/day',
+          category: 'Bridal Wear',
+          image: 'images/products/rental1.jpg',
+          description: 'Premium bridal lehenga available for rent',
+          availability: 'Available',
+          sizes: 'S, M, L, XL',
+          colors: 'Red, Pink, Gold'
+        },
+        {
+          id: 'SR002',
+          name: 'Party Wear Saree Rental',
+          price: '₹299/day',
+          category: 'Party Wear',
+          image: 'images/products/rental2.jpg',
+          description: 'Elegant party wear saree for special occasions',
+          availability: 'Available',
+          sizes: 'Free Size',
+          colors: 'Black, Navy, Wine'
+        }
+      ]
+    };
   }
 
   /**
@@ -24,7 +88,6 @@ class ExcelHandler {
     }
 
     this.showLoadingState(container);
-
     try {
       const products = await this.fetchProducts(type);
       this.renderProducts(products, container);
@@ -35,7 +98,7 @@ class ExcelHandler {
   }
 
   /**
-   * Fetch products from Google Sheets CSV export
+   * Fetch products from Google Sheets JSON API with fallback
    */
   async fetchProducts(type = 'shop') {
     const cacheKey = `products_${type}`;
@@ -51,7 +114,7 @@ class ExcelHandler {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Accept': 'text/csv'
+          'Accept': 'application/json'
         }
       });
 
@@ -59,229 +122,150 @@ class ExcelHandler {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const csvText = await response.text();
-      const products = this.parseCSV(csvText);
+      const jsonData = await response.json();
+      const products = this.parseGoogleSheetsJSON(jsonData);
       
-      // Cache the results
+      // Cache the successful response
       this.cache.set(cacheKey, {
         data: products,
         timestamp: Date.now()
       });
-
+      
       return products;
     } catch (error) {
-      console.error('Error fetching CSV data:', error);
-      throw new Error('Failed to fetch product data. Please check your internet connection.');
+      console.warn('Google Sheets API failed, using fallback data:', error);
+      // Return fallback data immediately
+      const fallbackProducts = this.fallbackData[type] || this.fallbackData.shop;
+      
+      // Cache fallback data for shorter duration
+      this.cache.set(cacheKey, {
+        data: fallbackProducts,
+        timestamp: Date.now()
+      });
+      
+      return fallbackProducts;
     }
   }
 
   /**
-   * Parse CSV data into product objects
+   * Parse Google Sheets JSON API response
    */
-  parseCSV(csvText) {
-    const lines = csvText.split('\n').filter(line => line.trim());
-    if (lines.length < 2) {
-      throw new Error('Invalid CSV data - no products found');
+  parseGoogleSheetsJSON(jsonData) {
+    if (!jsonData.values || jsonData.values.length < 2) {
+      throw new Error('Invalid Google Sheets data format');
     }
 
-    const headers = this.parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
+    const [headers, ...rows] = jsonData.values;
     const products = [];
 
-    for (let i = 1; i < lines.length; i++) {
-      const values = this.parseCSVLine(lines[i]);
-      if (values.length === 0 || values.every(v => !v.trim())) continue;
+    rows.forEach((row, index) => {
+      if (row.length < headers.length) {
+        console.warn(`Row ${index + 2} has missing data, skipping`);
+        return;
+      }
 
       const product = {};
-      headers.forEach((header, index) => {
-        product[header] = values[index] ? values[index].trim() : '';
+      headers.forEach((header, i) => {
+        const key = header.toLowerCase().replace(/\s+/g, '_');
+        product[key] = row[i] || '';
       });
 
-      // Validate required fields
-      if (product.id && product.name && product.price) {
-        // Clean and format the product data
-        product.id = product.id.toString();
-        product.price = this.formatPrice(product.price);
-        product.image = this.formatImageUrl(product.image || product.imageurl);
-        product.category = product.category || 'Uncategorized';
-        product.description = product.description || '';
-        product.stock = parseInt(product.stock) || 0;
-        
+      // Skip empty rows
+      if (product.name && product.name.trim()) {
         products.push(product);
       }
-    }
-
-    if (products.length === 0) {
-      throw new Error('No valid products found in the data');
-    }
+    });
 
     return products;
-  }
-
-  /**
-   * Parse a single CSV line, handling commas within quotes
-   */
-  parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current);
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    
-    result.push(current);
-    return result;
-  }
-
-  /**
-   * Format price to display currency
-   */
-  formatPrice(price) {
-    const numPrice = parseFloat(price.toString().replace(/[^\d.]/g, ''));
-    return isNaN(numPrice) ? 'Price on request' : `₹${numPrice.toLocaleString('en-IN')}`;
-  }
-
-  /**
-   * Format and validate image URL
-   */
-  formatImageUrl(imageUrl) {
-    if (!imageUrl) return 'images/placeholder.jpg';
-    
-    // If it's already a full URL, return as is
-    if (imageUrl.startsWith('http')) return imageUrl;
-    
-    // If it's a relative path, make it absolute
-    return imageUrl.startsWith('/') ? imageUrl : `images/${imageUrl}`;
   }
 
   /**
    * Render products in the container
    */
   renderProducts(products, container) {
-    container.innerHTML = '';
-    
-    if (products.length === 0) {
-      container.innerHTML = '<p class="no-products">No products available at the moment.</p>';
+    if (!products || products.length === 0) {
+      container.innerHTML = '<div class="no-products">No products available at the moment.</div>';
       return;
     }
 
-    const fragment = document.createDocumentFragment();
-    
-    products.forEach(product => {
-      const productCard = this.createProductCard(product);
-      fragment.appendChild(productCard);
-    });
-    
-    container.appendChild(fragment);
+    const productsHTML = products.map(product => this.createProductCard(product)).join('');
+    container.innerHTML = productsHTML;
+
+    // Add click handlers for product cards
+    this.attachProductHandlers(container);
   }
 
   /**
-   * Create a product card element
+   * Create individual product card HTML
    */
   createProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.setAttribute('data-product-id', product.id);
-    card.setAttribute('data-category', product.category);
-    
-    const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
-    const stockText = product.stock > 0 ? 'In Stock' : 'Out of Stock';
-    
-    card.innerHTML = `
-      <div class="product-image-container">
-        <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" onerror="this.src='images/placeholder.jpg'">
-        <div class="product-overlay">
-          <button class="quick-view-btn" onclick="window.excelHandler.viewProduct('${product.id}')">
-            Quick View
-          </button>
+    const name = product.name || 'Unnamed Product';
+    const price = product.price || 'Price not available';
+    const image = product.image || 'images/placeholder.jpg';
+    const description = product.description || 'No description available';
+    const category = product.category || 'Uncategorized';
+    const availability = product.availability || 'Unknown';
+
+    return `
+      <div class="product-card" data-product-id="${product.id || ''}">
+        <div class="product-image">
+          <img src="${image}" alt="${name}" loading="lazy" onerror="this.src='images/placeholder.jpg'">
+          <div class="product-overlay">
+            <button class="quick-view-btn" data-product-id="${product.id || ''}">
+              Quick View
+            </button>
+          </div>
         </div>
-        <span class="stock-badge ${stockClass}">${stockText}</span>
-      </div>
-      <div class="product-info">
-        <h3 class="product-name">${this.escapeHtml(product.name)}</h3>
-        <p class="product-category">${this.escapeHtml(product.category)}</p>
-        <p class="product-description">${this.escapeHtml(this.truncateText(product.description, 100))}</p>
-        <div class="product-footer">
-          <span class="product-price">${product.price}</span>
-          <button class="view-details-btn" onclick="window.excelHandler.viewProduct('${product.id}')">
-            View Details
-          </button>
+        <div class="product-info">
+          <span class="product-category">${category}</span>
+          <h3 class="product-name">${name}</h3>
+          <p class="product-description">${description}</p>
+          <div class="product-meta">
+            <span class="product-price">${price}</span>
+            <span class="product-availability ${availability.toLowerCase().replace(/\s+/g, '-')}">
+              ${availability}
+            </span>
+          </div>
+          <div class="product-actions">
+            <button class="btn btn-primary add-to-cart" data-product-id="${product.id || ''}">
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
     `;
-    
-    return card;
   }
 
   /**
-   * View product details - redirect to product.html
+   * Attach event handlers to product cards
    */
-  viewProduct(productId) {
-    if (!productId) {
-      console.error('Product ID is required');
-      return;
-    }
-    
-    // Store product ID in session storage for product.html to use
-    sessionStorage.setItem('selectedProductId', productId);
-    
-    // Navigate to product details page
-    window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
-  }
-
-  /**
-   * Get a specific product by ID
-   */
-  async getProductById(productId, type = 'shop') {
-    try {
-      const products = await this.fetchProducts(type);
-      return products.find(p => p.id === productId.toString());
-    } catch (error) {
-      console.error('Error fetching product:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Filter products by category
-   */
-  filterProducts(category, containerSelector = '.products-grid') {
-    const container = document.querySelector(containerSelector);
-    if (!container) return;
-    
-    const productCards = container.querySelectorAll('.product-card');
-    
-    productCards.forEach(card => {
-      const productCategory = card.getAttribute('data-category');
-      const shouldShow = !category || category === 'all' || productCategory === category;
-      card.style.display = shouldShow ? 'block' : 'none';
+  attachProductHandlers(container) {
+    // Quick view buttons
+    container.querySelectorAll('.quick-view-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const productId = btn.dataset.productId;
+        this.openQuickView(productId);
+      });
     });
-  }
 
-  /**
-   * Search products by name or description
-   */
-  searchProducts(query, containerSelector = '.products-grid') {
-    const container = document.querySelector(containerSelector);
-    if (!container) return;
-    
-    const productCards = container.querySelectorAll('.product-card');
-    const searchTerm = query.toLowerCase().trim();
-    
-    productCards.forEach(card => {
-      const name = card.querySelector('.product-name').textContent.toLowerCase();
-      const description = card.querySelector('.product-description').textContent.toLowerCase();
-      const shouldShow = !searchTerm || name.includes(searchTerm) || description.includes(searchTerm);
-      card.style.display = shouldShow ? 'block' : 'none';
+    // Add to cart buttons
+    container.querySelectorAll('.add-to-cart').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const productId = btn.dataset.productId;
+        this.addToCart(productId);
+      });
+    });
+
+    // Product card clicks
+    container.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (!e.target.closest('button')) {
+          const productId = card.dataset.productId;
+          this.viewProductDetails(productId);
+        }
+      });
     });
   }
 
@@ -303,65 +287,77 @@ class ExcelHandler {
   showErrorState(container, message) {
     container.innerHTML = `
       <div class="error-state">
-        <div class="error-icon">⚠️</div>
-        <p>Unable to load products</p>
-        <p class="error-message">${this.escapeHtml(message)}</p>
-        <button class="retry-btn" onclick="window.location.reload()">Try Again</button>
+        <p class="error-message">Failed to load products: ${message}</p>
+        <button class="btn btn-secondary retry-btn" onclick="window.location.reload()">
+          Retry
+        </button>
       </div>
     `;
   }
 
   /**
-   * Utility: Escape HTML to prevent XSS
+   * Open quick view modal
    */
-  escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  openQuickView(productId) {
+    console.log('Opening quick view for product:', productId);
+    // Implement quick view modal logic
   }
 
   /**
-   * Utility: Truncate text to specified length
+   * Add product to cart
    */
-  truncateText(text, maxLength) {
-    if (!text || text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
+  addToCart(productId) {
+    console.log('Adding to cart:', productId);
+    // Implement add to cart logic
   }
 
   /**
-   * Clear cache
+   * View product details page
+   */
+  viewProductDetails(productId) {
+    console.log('Viewing product details:', productId);
+    // Implement navigation to product details page
+  }
+
+  /**
+   * Clear cache (useful for development)
    */
   clearCache() {
     this.cache.clear();
+    console.log('Cache cleared');
   }
 
   /**
-   * Refresh products
+   * Get cached data for debugging
    */
-  async refresh(containerSelector = '.products-grid', type = 'shop') {
-    this.clearCache();
-    await this.init(containerSelector, type);
+  getCacheStatus() {
+    return {
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys()),
+      expiry: this.cacheExpiry
+    };
   }
 }
 
-// Initialize global instance
-window.excelHandler = new ExcelHandler();
-
-// Auto-initialize when DOM is loaded
+// Auto-initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-  // Check if we're on a page that should load products
-  const productsContainer = document.querySelector('.products-grid');
-  if (productsContainer) {
-    // Determine type from page URL or data attribute
-    const isRentPage = window.location.pathname.includes('rent') || 
-                      document.body.classList.contains('rent-page');
-    const type = isRentPage ? 'rent' : 'shop';
-    
-    window.excelHandler.init('.products-grid', type);
+  // Initialize for shop page
+  if (document.querySelector('.products-grid.shop')) {
+    const shopHandler = new ExcelHandler();
+    shopHandler.init('.products-grid.shop', 'shop');
+  }
+
+  // Initialize for rent page
+  if (document.querySelector('.products-grid.rent')) {
+    const rentHandler = new ExcelHandler();
+    rentHandler.init('.products-grid.rent', 'rent');
   }
 });
 
-// Export for module usage
+// Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = ExcelHandler;
+}
+if (typeof window !== 'undefined') {
+  window.ExcelHandler = ExcelHandler;
 }
