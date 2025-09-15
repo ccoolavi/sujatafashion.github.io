@@ -8,8 +8,8 @@
 console.log('Excel Handler loading...');
 
 // Google Sheets CSV URLs with correct GID numbers
-const SHOP_CSV_URL = 'https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID/export?format=csv&gid=0';
-const RENTAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID/export?format=csv&gid=1';
+const SHOP_CSV_URL = 'https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/export?format=csv&gid=1717675571';
+const RENTAL_CSV_URL = 'https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/export?format=csv&gid=1815405474';
 
 // WhatsApp configuration
 const WHATSAPP_NUMBER = '+919763416561';
@@ -20,43 +20,46 @@ let rentalProducts = [];
 let isLoading = false;
 
 /**
- * Parse CSV text into array of objects
+ * Parse CSV text into array of objects with proper handling for quoted fields
  */
 function parseCSV(csvText) {
     const lines = csvText.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    if (lines.length < 2) return [];
+    
+    // Parse header row
+    const headers = parseCSVLine(lines[0]);
     const products = [];
     
     for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
         
-        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+        const values = parseCSVLine(line);
         const product = {};
         
         headers.forEach((header, index) => {
             product[header] = values[index] || '';
         });
         
-        // Map to expected structure
-        if (product.ProductID && product.Name_en) {
+        // Map to expected structure with proper field mapping
+        if (product['Product ID'] && product['Name (English)']) {
             products.push({
-                id: parseInt(product.ProductID) || 0,
-                name: product.Name_en || 'Unnamed Product',
-                price: parseFloat(product.Price) || 0,
-                image: product.MainImage || '',
-                category: (product.Category || '').toLowerCase(),
-                description: product.Description_en || product.Name_en || 'No description available',
-                nameHi: product.Name_hi || '',
-                descriptionHi: product.Description_hi || '',
+                id: parseInt(product['Product ID']) || 0,
+                name: product['Name (English)'] || 'Unnamed Product',
+                price: parseFloat(product['Price']) || 0,
+                image: product['Main Image'] || '',
+                category: (product['Category'] || '').toLowerCase(),
+                description: product['Description (English)'] || product['Name (English)'] || 'No description available',
+                nameHi: product['Name (Hindi)'] || '',
+                descriptionHi: product['Description (Hindi)'] || '',
                 gallery: [
-                    product.MainImage,
-                    product.Image2,
-                    product.Image3,
-                    product.Image4,
-                    product.Image5
+                    product['Main Image'],
+                    product['Image 2'],
+                    product['Image 3'],
+                    product['Image 4'],
+                    product['Image 5']
                 ].filter(img => img && img.trim()),
-                tags: (product.Tags || '').split(',').map(tag => tag.trim()).filter(tag => tag)
+                tags: (product['Tags'] || '').split(',').map(tag => tag.trim()).filter(tag => tag)
             });
         }
     }
@@ -65,230 +68,165 @@ function parseCSV(csvText) {
 }
 
 /**
- * Fetch CSV data from Google Sheets
+ * Parse a single CSV line handling quoted fields properly
  */
-async function fetchCSVData(url) {
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+                // Handle escaped quotes
+                current += '"';
+                i++; // Skip next quote
+            } else {
+                // Toggle quote state
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            // End of field
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    
+    // Add the last field
+    result.push(current.trim());
+    return result;
+}
+
+/**
+ * Fetch and parse CSV data from Google Sheets
+ */
+async function fetchProductData(csvUrl) {
     try {
-        const response = await fetch(url);
+        console.log('Fetching data from:', csvUrl);
+        const response = await fetch(csvUrl);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const csvText = await response.text();
+        console.log('CSV data received:', csvText.substring(0, 200) + '...');
+        
         return parseCSV(csvText);
     } catch (error) {
-        console.error('Error fetching CSV data:', error);
+        console.error('Error fetching product data:', error);
         return [];
     }
 }
 
 /**
- * Load all product data
+ * Load shop products
  */
-async function loadAllProducts() {
-    if (isLoading) {
-        console.log('Already loading products...');
-        return;
-    }
-    
+async function loadShopProducts() {
+    if (isLoading) return;
     isLoading = true;
-    console.log('Loading products from Google Sheets...');
     
     try {
-        // Show loading state
-        showLoadingState();
-        
-        // Fetch both shop and rental data in parallel
-        const [shopData, rentalData] = await Promise.all([
-            fetchCSVData(SHOP_CSV_URL),
-            fetchCSVData(RENTAL_CSV_URL)
-        ]);
-        
-        shopProducts = shopData;
-        rentalProducts = rentalData;
-        
-        console.log(`Loaded ${shopProducts.length} shop products and ${rentalProducts.length} rental products`);
-        
-        // Display products
-        displayProducts();
-        
+        shopProducts = await fetchProductData(SHOP_CSV_URL);
+        console.log('Shop products loaded:', shopProducts.length);
+        return shopProducts;
     } catch (error) {
-        console.error('Error loading products:', error);
-        showErrorState();
+        console.error('Error loading shop products:', error);
+        return [];
     } finally {
         isLoading = false;
     }
 }
 
 /**
- * Show loading state in UI
+ * Load rental products
  */
-function showLoadingState() {
-    const container = document.getElementById('products-container');
-    if (container) {
-        container.innerHTML = `
-            <div class="loading-state">
-                <div class="spinner"></div>
-                <p>Loading products from Google Sheets...</p>
-            </div>
-        `;
+async function loadRentalProducts() {
+    if (isLoading) return;
+    isLoading = true;
+    
+    try {
+        rentalProducts = await fetchProductData(RENTAL_CSV_URL);
+        console.log('Rental products loaded:', rentalProducts.length);
+        return rentalProducts;
+    } catch (error) {
+        console.error('Error loading rental products:', error);
+        return [];
+    } finally {
+        isLoading = false;
     }
 }
 
 /**
- * Show error state in UI
+ * Get products by category
  */
-function showErrorState() {
-    const container = document.getElementById('products-container');
-    if (container) {
-        container.innerHTML = `
-            <div class="error-state">
-                <p>Error loading products. Please try again later.</p>
-                <button onclick="loadAllProducts()" class="retry-btn">Retry</button>
-            </div>
-        `;
-    }
+function getProductsByCategory(products, category) {
+    if (!category || category === 'all') return products;
+    return products.filter(product => 
+        product.category && product.category.includes(category.toLowerCase())
+    );
 }
 
 /**
- * Display products in the UI
+ * Create WhatsApp message for product inquiry
  */
-function displayProducts() {
-    const container = document.getElementById('products-container');
-    if (!container) {
-        console.error('Products container not found');
-        return;
-    }
+function createWhatsAppMessage(product, type = 'shop') {
+    const productType = type === 'rental' ? 'Rental' : 'Purchase';
+    const message = `Hi! I'm interested in this ${productType.toLowerCase()} item:\n\n` +
+                   `${product.name}\n` +
+                   `Price: ₹${product.price}\n` +
+                   `Product ID: ${product.id}\n\n` +
+                   `Could you please provide more details?`;
     
-    // Combine shop and rental products for display
-    const allProducts = [...shopProducts, ...rentalProducts];
-    
-    if (allProducts.length === 0) {
-        container.innerHTML = '<p class="no-products">No products available</p>';
-        return;
-    }
-    
-    container.innerHTML = allProducts.map(product => `
-        <div class="product-card" data-product-id="${product.id}">
-            <div class="product-image-container">
-                <img src="${product.image}" 
-                     alt="${product.name}" 
-                     class="product-image"
-                     onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
-            </div>
-            <div class="product-info">
-                <h3 class="product-name">${product.name}</h3>
-                <p class="product-price">₹${product.price.toLocaleString()}</p>
-                <p class="product-description">${product.description}</p>
-                <div class="product-actions">
-                    <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
-                        💬 Order on WhatsApp
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    console.log(`Displayed ${allProducts.length} products`);
+    return encodeURIComponent(message);
 }
 
 /**
- * Open WhatsApp with product details
+ * Open WhatsApp with product inquiry
  */
-function openWhatsApp(productName, price) {
-    const message = `Hi! I'm interested in:\n${productName}\nPrice: ₹${price.toLocaleString()}\n\nCan you provide more details?`;
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+function inquireOnWhatsApp(product, type = 'shop') {
+    const message = createWhatsAppMessage(product, type);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
     window.open(whatsappUrl, '_blank');
 }
 
 /**
- * Filter products by category
+ * Initialize the excel handler
  */
-function filterProducts(category) {
-    const allProducts = [...shopProducts, ...rentalProducts];
-    const filtered = category === 'all' ? allProducts : allProducts.filter(p => p.category === category);
+async function initializeExcelHandler() {
+    console.log('Initializing Excel Handler...');
     
-    const container = document.getElementById('products-container');
-    if (container && filtered.length > 0) {
-        container.innerHTML = filtered.map(product => `
-            <div class="product-card" data-product-id="${product.id}">
-                <div class="product-image-container">
-                    <img src="${product.image}" 
-                         alt="${product.name}" 
-                         class="product-image"
-                         onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
-                </div>
-                <div class="product-info">
-                    <h3 class="product-name">${product.name}</h3>
-                    <p class="product-price">₹${product.price.toLocaleString()}</p>
-                    <p class="product-description">${product.description}</p>
-                    <div class="product-actions">
-                        <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
-                            💬 Order on WhatsApp
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+    // Pre-load data if needed
+    try {
+        await Promise.all([
+            loadShopProducts(),
+            loadRentalProducts()
+        ]);
+        console.log('Excel Handler initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Excel Handler:', error);
     }
 }
 
-/**
- * Search products by name or description
- */
-function searchProducts(query) {
-    if (!query.trim()) {
-        displayProducts();
-        return;
-    }
-    
-    const allProducts = [...shopProducts, ...rentalProducts];
-    const searchTerm = query.toLowerCase();
-    const filtered = allProducts.filter(product => 
-        product.name.toLowerCase().includes(searchTerm) ||
-        product.description.toLowerCase().includes(searchTerm) ||
-        product.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-    );
-    
-    const container = document.getElementById('products-container');
-    if (container) {
-        if (filtered.length === 0) {
-            container.innerHTML = `<p class="no-results">No products found for "${query}"</p>`;
-        } else {
-            container.innerHTML = filtered.map(product => `
-                <div class="product-card" data-product-id="${product.id}">
-                    <div class="product-image-container">
-                        <img src="${product.image}" 
-                             alt="${product.name}" 
-                             class="product-image"
-                             onerror="this.src='https://via.placeholder.com/300x400?text=Image+Not+Available'">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-price">₹${product.price.toLocaleString()}</p>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-actions">
-                            <button class="whatsapp-btn" onclick="openWhatsApp('${product.name}', ${product.price})">
-                                💬 Order on WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-    }
-}
-
-// Initialize when DOM is ready
+// Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAllProducts);
+    document.addEventListener('DOMContentLoaded', initializeExcelHandler);
 } else {
-    loadAllProducts();
+    initializeExcelHandler();
 }
 
-// Export functions for global use
-window.filterProducts = filterProducts;
-window.searchProducts = searchProducts;
-window.openWhatsApp = openWhatsApp;
-window.loadAllProducts = loadAllProducts;
-
-console.log('Excel Handler loaded successfully');
+// Export functions for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        loadShopProducts,
+        loadRentalProducts,
+        getProductsByCategory,
+        inquireOnWhatsApp,
+        shopProducts,
+        rentalProducts
+    };
+}
