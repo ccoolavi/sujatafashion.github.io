@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Your Stylist - Sujata Fashion</title>
+  <style>
+    body { margin: 0; padding: 0; min-height:100vh; font-family:'Segoe UI',Arial,sans-serif;
+      background: linear-gradient(120deg, #e0c3fc, #8ec5fc, #e0c3fc 80%);
+      animation: bgmove 9s ease-in-out infinite alternate; display: flex; justify-content: center; align-items: center; overflow: hidden;}
+    @keyframes bgmove {to {background-position: 100vw 100vh;}}
+    #main { background: rgba(255,255,255,0.94); box-shadow: 0 4px 36px #d5d7f24a;
+      border-radius: 20px; padding: 2rem 2.5rem; max-width: 370px; min-width: 280px; min-height:390px; margin:2rem; text-align:center; position:relative;}
+    .bigbutton { background: #311b58; color:white; border:none;border-radius:33px;
+      padding:1.2rem 2.4rem;font-size:1.4rem;cursor:pointer;margin:3rem auto 2rem;width:98%;max-width:330px;font-weight:600;transition:.2s;box-shadow:0 2px 8px #b69df14a;}
+    .bigbutton:hover {background: #502688;}
+    .bubble{max-width:79%;padding:.8em 1.3em;border-radius:19px;display:inline-block;
+      font-size:1.06em;margin-top:10px;box-shadow:0 2px 6px #c9d1ec2a;}
+    .bubble.ai{background:#f4ecfe;align-self:flex-start; color:#5f3385;border-bottom-left-radius:5px;}
+    .bubble.user{background:#e9eafb;align-self:flex-end; color:#222;border-bottom-right-radius:5px;}
+    #chatbox{display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin:1.2rem 0 0 0;min-height:110px;}
+    #answerinput {border-radius:25px;padding:.6em 1em;border:1px solid #eee;font-size:1.05em;width:73%;margin-top:1.2em}
+    #sendbtn{border:none;background:#7a42da;color:white;padding:.57em 1.18em;border-radius:18px;margin-left:.7em;cursor:pointer}
+    .options{display:flex;flex-direction:column;align-items:center;margin:1.5em 0 1em 0;}
+    .optionbtn{border:1px solid #be5ef6;color:#623c93;background:white;border-radius:1.15em;padding:.6em 1.6em;font-weight:500;cursor:pointer;margin:5px 0;width:85%;max-width:250px;font-size:1.08em;transition:.18s}
+    .optionbtn:hover{background:#e4cef7}
+    #loader{margin:23px;font-size:1.1em;animation:pulse 1.2s infinite alternate;}
+    @keyframes pulse{to{opacity:.3}}
+    #overlay, #consent {position:fixed;top:0;left:0;width:100vw;height:100vh;background:#291649e7;display:flex;align-items:center;justify-content:center;z-index:11}
+    #consent{text-align:center;color:white;flex-direction:column;}
+    #consent button{margin-top:30px;background:#fff;color:#6336a9;font-weight:700;padding:1em 2em;border:none;border-radius:19px;cursor:pointer;font-size:1.1em}
+    #recaptcha {margin:17px auto;display:none;}
+    .mininote{font-size:.97em;color:#8d73b8;}
+  </style>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+<div id="consent" style="display:flex">
+  <div>
+    <h2>Before we start...</h2>
+    <p><b>Sujata Fashion</b> will only use your answers/images to help you find fashion styles.<br>
+      We don't sell or share your data. Your session is private.</p>
+    <p style="font-size:.97em;color:#eec;">By continuing you consent to this.<br>
+      <span class="mininote">You can end at any time.</span>
+    </p>
+    <button onclick="acceptConsent()">I Consent & Start</button>
+  </div>
+</div>
+<div id="main" style="display:none;">
+  <div id="recaptcha" class="g-recaptcha"
+      data-sitekey="6Lf8vsorAAAAAJQd9uPgTMw7rWjmmLRLID9L-KR_"
+      data-callback="captchaPassed"></div>
+  <div id="startwrap" style="display:flex;flex-direction:column;align-items:center;">
+    <button id="startbtn" class="bigbutton">Start Styling Your New Outfit</button>
+  </div>
+  <div id="modal" style="display:none;">
+    <h3>Who are you?</h3>
+    <button class="optionbtn" onclick="chooseType('newbie')">I am a Newbie</button>
+    <button class="optionbtn" onclick="chooseType('professional')">I am a Professional</button>
+  </div>
+  <div id="chatwrap" style="display:none;flex-direction:column;align-items:center;">
+    <div id="chatbox"></div>
+    <form id="answerform" style="display:flex;margin-top:11px;" onsubmit="return sendAnswer()">
+      <input id="answerinput" type="text" autocomplete="off" disabled placeholder="Type your answer...">
+      <button id="sendbtn" type="submit" disabled>Send</button>
+    </form>
+    <div id="loader" style="display:none;">Crafting your look...</div>
+    <div class="options" id="finaloptions" style="display:none"></div>
+  </div>
+</div>
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzF6tnq3255H6BqKuoXMmq6A2KFGjqzImU4eQUi3Igew47zAxe6kuhGpPdUlKLqqmniOA/exec';
+let sessionId='', userToken='', identity='', step=0, waiting=false, captchaGood=false;
+let tryCount = 0, firstTryAt = 0;
+
+// Consent modal acceptance
+function acceptConsent() {
+  document.getElementById('consent').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+}
+window.acceptConsent = acceptConsent;
+
+// Captcha callback
+function captchaPassed() {
+  captchaGood = true;
+  tryCount = 0;
+  document.getElementById('recaptcha').style.display = 'none';
+}
+window.captchaPassed = captchaPassed;
+
+// Start button click handler with smart reCAPTCHA logic
+document.getElementById('startbtn').onclick = ()=>{
+  let now = Date.now();
+  if (!firstTryAt || now - firstTryAt > 30000) { firstTryAt = now; tryCount = 0; }
+  tryCount++;
+
+  // Only show captcha on third+ try within 30s
+  if(tryCount >= 3 && !captchaGood) {
+    document.getElementById('recaptcha').style.display = 'block';
+    alert('Please solve the Captcha before continuing.');
+    return;
+  }
+  if (tryCount < 3 || captchaGood) {
+    document.getElementById('startwrap').style.display = 'none';
+    document.getElementById('modal').style.display = 'block';
+  }
+};
+
+function chooseType(type) {
+  identity=type;
+  document.getElementById('modal').style.display = 'none';
+  showChat();
+  fetch(SCRIPT_URL+'?action=start', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({identity})
+  })
+  .then(r=>r.json()).then(d=>{
+    sessionId = d.session_id;
+    userToken = d.user_token;
+    addBubble('Hi! Let\'s get you styled. Please answer a few questions.', 'ai');
+    enableAnswer();
+  })
+  .catch(()=>{addBubble('Oops! Could not start session.', 'ai');});
+}
+window.chooseType=chooseType;
+
+function showChat(){
+  document.getElementById('chatwrap').style.display='flex';
+  document.getElementById('chatbox').innerHTML='';
+}
+
+function addBubble(text, who){
+  let b=document.createElement('div');
+  b.className='bubble '+(who||'ai');
+  b.innerText=text; document.getElementById('chatbox').append(b);
+  document.getElementById('chatbox').scrollTop=99999;
+}
+
+function sendAnswer(){
+  let inp=document.getElementById('answerinput');
+  let val=inp.value.trim();
+  if(!val || !sessionId) return false;
+  inp.value=''; inp.disabled = true;
+  document.getElementById('sendbtn').disabled=true;
+  addBubble(val, 'user');
+  showLoader(true);
+  fetch(SCRIPT_URL+'?action=message', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({session_id:sessionId, user_token:userToken, msg:val})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    showLoader(false);
+    if(d.next_question) { addBubble(d.next_question, 'ai'); enableAnswer(); }
+    if(d.options && d.options.length) { finalOptions(d.options); }
+    if(d.image_url) { showImage(d.image_url); }
+  });
+  return false;
+}
+window.sendAnswer=sendAnswer;
+
+function enableAnswer() { document.getElementById('answerinput').disabled=false; document.getElementById('sendbtn').disabled=false; }
+
+function showLoader(show){ document.getElementById('loader').style.display=show?'block':'none'; }
+
+function showImage(url){
+  let img=document.createElement('img');
+  img.src=url; img.style='display:block;width:96%;max-width:290px;margin:19px auto 5px;border-radius:13px;box-shadow:0 3px 16px #6e55e031;';
+  document.getElementById('chatbox').append(img);
+}
+
+function finalOptions(opts){
+  let c=document.getElementById('finaloptions');
+  c.innerHTML='';
+  if(!opts.length) return;
+  c.style.display='block';
+  opts.forEach(opt=>{
+    let btn=document.createElement('button');
+    btn.className='optionbtn';
+    btn.innerText=opt.text||opt;
+    btn.onclick=()=>sendFinal(opt.value||opt.text||opt);
+    c.appendChild(btn);
+  });
+}
+
+function sendFinal(choice){
+  showLoader(true);
+  fetch(SCRIPT_URL+'?action=choice', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({session_id:sessionId, user_token:userToken, choice:choice})
+  })
+  .then(r=>r.json()).then(d=>{
+    showLoader(false);
+    // Optional: process d.next or reset UI etc
+  });
+}
+</script>
+</body>
+</html>
