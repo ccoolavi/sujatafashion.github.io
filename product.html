@@ -173,14 +173,24 @@
     </style>
 </head>
 <body>
+    <!-- Language Toggle -->
+    <div style="position: fixed; top: 15px; right: 15px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: white; padding: 6px 12px; border-radius: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+        <label for="lang-select-prod" style="font-size: 1.1em;">🌐</label>
+        <select id="lang-select-prod" class="lang-select" onchange="changeLanguage(this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; font-size: 0.9em; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="mr">मराठी</option>
+        </select>
+    </div>
     <div class="container">
-        <button class="back-button" onclick="goBack()">← Back to Products</button>
+        <button class="back-button" onclick="goBack()" data-i18n="back_btn_products">← Back to Products</button>
         
         <div id="product-detail-container">
-            <div class="loading">Loading product details...</div>
+            <div class="loading" data-i18n="loading_products">Loading product details...</div>
         </div>
     </div>
 
+    <script src="js/translations.js?v=3"></script>
     <script src="js/product-page.js"></script>
 </body>
 </html>

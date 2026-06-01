@@ -28,8 +28,8 @@
                  alt="Sujata Fashion Logo"
                  class="main-header-logo">
             <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;">
-                <h1 class="main-header-title">Sujata Fashions</h1>
-                <p class="main-header-tagline">25 Years of Crafting Designs and Designers</p>
+                <h1 class="main-header-title" data-i18n="header_title">Sujata Fashions</h1>
+                <p class="main-header-tagline" data-i18n="header_tagline">25 Years of Crafting Designs and Designers</p>
             </div>
         </div>
     </div>
@@ -37,10 +37,18 @@
     <!-- Navigation -->
     <nav class="main-nav">
         <div class="nav-container">
-            <button class="nav-button active" onclick="switchTab('academy')">🎓 Offline Courses</button>
-            <button class="nav-button" onclick="switchTab('online')">💻 Online Courses</button>
-            <button class="nav-button" onclick="switchTab('shop')">🛍️ Shop</button>
-            <button class="nav-button" onclick="switchTab('rent')">👗 Rent</button>
+            <button class="nav-button active" onclick="switchTab('academy')" data-i18n="nav_offline">🎓 Offline Courses</button>
+            <button class="nav-button" onclick="switchTab('online')" data-i18n="nav_online">💻 Online Courses</button>
+            <button class="nav-button" onclick="switchTab('shop')" data-i18n="nav_shop">🛍️ Shop</button>
+            <button class="nav-button" onclick="switchTab('rent')" data-i18n="nav_rent">👗 Rent</button>
+            <span class="language-toggle" style="margin-left: 15px; display: inline-flex; align-items: center;">
+                <label for="lang-select-top" style="margin-right: 5px; font-size: 1.2em;">🌐</label>
+                <select id="lang-select-top" class="lang-select" onchange="changeLanguage(this.value)" style="padding: 6px 10px; border-radius: 8px; border: 1px solid #ddd; background: white; font-size: 0.9em; cursor: pointer;">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="mr">मराठी</option>
+                </select>
+            </span>
         </div>
     </nav>
 
@@ -77,7 +85,7 @@
                         text-shadow: 2px 2px 8px rgba(0,0,0,0.12);
                         letter-spacing: 1px;
                         font-family: 'Georgia', serif;
-                    ">
+                    " data-i18n="academy_title">
                         Sujata Fashion Academy
                     </h1>
                     <p style="
@@ -87,159 +95,159 @@
                         margin-bottom: 0;
                         font-family: 'Georgia', serif;
                         text-shadow: 1px 1px 4px rgba(0,0,0,0.08);
-                    ">
+                    " data-i18n="academy_subtitle">
                         25 Years of Fashion Education Excellence
                     </p>
                 </div>
             </section>
             <!-- Hero Section -->
             <section class="hero-section" data-aos="fade-up">
-                <h2 class="hero-title">Master the Complete Art of Fashion Design</h2>
-                <p class="hero-description">
+                <h2 class="hero-title" data-i18n="hero_title">Master the Complete Art of Fashion Design</h2>
+                <p class="hero-description" data-i18n="hero_desc">
                     With 25 years of excellence in fashion education, Sujata Fashion Academy has been nurturing creative talents and shaping successful fashion careers. Our comprehensive courses combine traditional techniques with modern design principles.
                 </p>
                 <div class="trust-strip" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-bottom: 30px;">
                     <div class="trust-card">
                         <span class="stat-number">25+</span>
-                        <span class="stat-label">Years of Excellence</span>
+                        <span class="stat-label" data-i18n="trust_years_label">Years of Excellence</span>
                     </div>
                     <div class="trust-card">
                         <span class="stat-number">1000+</span>
-                        <span class="stat-label">Students Trained</span>
+                        <span class="stat-label" data-i18n="trust_students_label">Students Trained</span>
                     </div>
                     <div class="trust-card">
                         <span class="stat-number">100%</span>
-                        <span class="stat-label">Practical Training</span>
+                        <span class="stat-label" data-i18n="trust_training_label">Practical Training</span>
                     </div>
                     <div class="trust-card">
                         <span class="stat-number">⭐4.9</span>
-                        <span class="stat-label">Student Rating</span>
+                        <span class="stat-label" data-i18n="trust_rating_label">Student Rating</span>
                     </div>
                 </div>
                 <div class="mission-box">
-                    <h3>Our Mission</h3>
-                    <p>To provide world-class fashion education that empowers students with practical skills and creative vision needed to excel in the fashion industry.</p>
+                    <h3 data-i18n="mission_title">Our Mission</h3>
+                    <p data-i18n="mission_desc">To provide world-class fashion education that empowers students with practical skills and creative vision needed to excel in the fashion industry.</p>
                 </div>
             </section>
 
             <!-- Courses Section -->
             <section class="courses-section">
-                <h2 class="section-title" data-aos="fade-up">Our Specialized Courses</h2>
+                <h2 class="section-title" data-aos="fade-up" data-i18n="courses_title">Our Specialized Courses</h2>
                 <div class="courses-grid">
                     <!-- Professional Fashion Design -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="100">
-                        <h3 class="course-title">Professional Fashion Design</h3>
-                        <span class="course-duration">Duration: 1 Year</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_pfd_title">Professional Fashion Design</h3>
+                        <span class="course-duration" data-i18n="course_pfd_duration">Duration: 1 Year</span>
+                        <p class="course-description" data-i18n="course_pfd_desc">
                             Our flagship comprehensive program covering all aspects of fashion design, pattern making, and garment construction.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_pfd_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Advanced pattern making and draping</li>
-                                <li>Garment construction techniques</li>
-                                <li>Fashion business and entrepreneurship</li>
-                                <li>Design portfolio development</li>
+                                <li data-i18n="course_pfd_feat1">Advanced pattern making and draping</li>
+                                <li data-i18n="course_pfd_feat2">Garment construction techniques</li>
+                                <li data-i18n="course_pfd_feat3">Fashion business and entrepreneurship</li>
+                                <li data-i18n="course_pfd_feat4">Design portfolio development</li>
                             </ul>
                         </div>
-                        <p style="margin-bottom: 15px;"><strong>🎓 Certificate:</strong> Industry-recognized diploma</p>
-                        <p style="margin-bottom: 20px;"><strong>💼 Career Support:</strong> Business setup guidance</p>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Professional Fashion Design', '1 Year')">Enrol Now</button>
+                        <p style="margin-bottom: 15px;" data-i18n="course_pfd_cert"><strong>🎓 Certificate:</strong> Industry-recognized diploma</p>
+                        <p style="margin-bottom: 20px;" data-i18n="course_pfd_career"><strong>💼 Career Support:</strong> Business setup guidance</p>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Professional Fashion Design', '1 Year')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
 
                     <!-- Blouse Design -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="200">
-                        <h3 class="course-title">Blouse Design</h3>
-                        <span class="course-duration">Duration: 3 Months</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_blouse_title">Blouse Design</h3>
+                        <span class="course-duration" data-i18n="course_blouse_duration">Duration: 3 Months</span>
+                        <p class="course-description" data-i18n="course_blouse_desc">
                             Specialized course focusing on traditional and modern blouse design patterns for various occasions.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_blouse_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Traditional blouse patterns</li>
-                                <li>Modern contemporary designs</li>
-                                <li>Fitting and alteration techniques</li>
-                                <li>Embellishment methods</li>
+                                <li data-i18n="course_blouse_feat1">Traditional blouse patterns</li>
+                                <li data-i18n="course_blouse_feat2">Modern contemporary designs</li>
+                                <li data-i18n="course_blouse_feat3">Fitting and alteration techniques</li>
+                                <li data-i18n="course_blouse_feat4">Embellishment methods</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Blouse Design', '3 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Blouse Design', '3 Months')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
 
                     <!-- Dress Design -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="300">
-                        <h3 class="course-title">Dress Design</h3>
-                        <span class="course-duration">Duration: 4 Months</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_dress_title">Dress Design</h3>
+                        <span class="course-duration" data-i18n="course_dress_duration">Duration: 4 Months</span>
+                        <p class="course-description" data-i18n="course_dress_desc">
                             Contemporary dress design techniques and trending styles for modern fashion needs.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_dress_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Western dress patterns</li>
-                                <li>Indo-western fusion designs</li>
-                                <li>Size grading and fitting</li>
-                                <li>Trend forecasting</li>
+                                <li data-i18n="course_dress_feat1">Western dress patterns</li>
+                                <li data-i18n="course_dress_feat2">Indo-western fusion designs</li>
+                                <li data-i18n="course_dress_feat3">Size grading and fitting</li>
+                                <li data-i18n="course_dress_feat4">Trend forecasting</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Dress Design', '4 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Dress Design', '4 Months')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
 
                     <!-- Aari Embroidery Basic -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="400">
-                        <h3 class="course-title">Aari Embroidery (Basic)</h3>
-                        <span class="course-duration">Duration: 2 Months</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_aari_basic_title">Aari Embroidery (Basic)</h3>
+                        <span class="course-duration" data-i18n="course_aari_basic_duration">Duration: 2 Months</span>
+                        <p class="course-description" data-i18n="course_aari_basic_desc">
                             Learn the intricate art of Aari embroidery with traditional techniques and modern applications.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_aari_basic_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Basic Aari techniques</li>
-                                <li>Thread work and beading</li>
-                                <li>Traditional patterns</li>
-                                <li>Design planning</li>
+                                <li data-i18n="course_aari_basic_feat1">Basic Aari techniques</li>
+                                <li data-i18n="course_aari_basic_feat2">Thread work and beading</li>
+                                <li data-i18n="course_aari_basic_feat3">Traditional patterns</li>
+                                <li data-i18n="course_aari_basic_feat4">Design planning</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Basic', '2 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Basic', '2 Months')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
 
                     <!-- Aari Embroidery Advanced -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="500">
-                        <h3 class="course-title">Aari Embroidery (Advanced)</h3>
-                        <span class="course-duration">Duration: 3 Months</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_aari_adv_title">Aari Embroidery (Advanced)</h3>
+                        <span class="course-duration" data-i18n="course_aari_adv_duration">Duration: 3 Months</span>
+                        <p class="course-description" data-i18n="course_aari_adv_desc">
                             Master advanced Aari embroidery patterns and commercial applications for professional work.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_aari_adv_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Complex embroidery patterns</li>
-                                <li>Commercial design techniques</li>
-                                <li>Quality control and finishing</li>
-                                <li>Business applications</li>
+                                <li data-i18n="course_aari_adv_feat1">Complex embroidery patterns</li>
+                                <li data-i18n="course_aari_adv_feat2">Commercial design techniques</li>
+                                <li data-i18n="course_aari_adv_feat3">Quality control and finishing</li>
+                                <li data-i18n="course_aari_adv_feat4">Business applications</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Advanced', '3 Months')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery Advanced', '3 Months')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
 
                     <!-- Online Aari Embroidery -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="600">
-                        <h3 class="course-title">Online Aari Embroidery</h3>
-                        <span class="course-duration">Duration: 6 Weeks</span>
-                        <p class="course-description">
+                        <h3 class="course-title" data-i18n="course_online_aari_title">Online Aari Embroidery</h3>
+                        <span class="course-duration" data-i18n="course_online_aari_duration">Duration: 6 Weeks</span>
+                        <p class="course-description" data-i18n="course_online_aari_desc">
                             Online course with live demonstrations and practice sessions. Perfect for remote learning.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="course_online_aari_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Live online demonstrations</li>
-                                <li>Interactive practice sessions</li>
-                                <li>Personal guidance via video calls</li>
-                                <li>Digital pattern sharing</li>
+                                <li data-i18n="course_online_aari_feat1">Live online demonstrations</li>
+                                <li data-i18n="course_online_aari_feat2">Interactive practice sessions</li>
+                                <li data-i18n="course_online_aari_feat3">Personal guidance via video calls</li>
+                                <li data-i18n="course_online_aari_feat4">Digital pattern sharing</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Aari Embroidery', '6 Weeks')">Enrol Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Aari Embroidery', '6 Weeks')" data-i18n="enrol_btn">Enrol Now</button>
                     </div>
                 </div>
             </section>
@@ -247,80 +255,80 @@
             <!-- Testimonials Section -->
             <section class="testimonials-section">
                 <div class="container">
-                    <h2 class="section-title" style="color: white;" data-aos="fade-up">Student Success Stories</h2>
+                    <h2 class="section-title" style="color: white;" data-aos="fade-up" data-i18n="testimonials_title">Student Success Stories</h2>
                     <div id="testimonials-grid" class="testimonials-grid">
-                        <div class="loading">Loading testimonials...</div>
+                        <div class="loading" data-i18n="loading_text">Loading testimonials...</div>
                     </div>
                 </div>
             </section>
 
             <!-- FAQ Section -->
             <section class="faq-section">
-                <h2 class="section-title" data-aos="fade-up">Frequently Asked Questions</h2>
+                <h2 class="section-title" data-aos="fade-up" data-i18n="faq_title">Frequently Asked Questions</h2>
                 <div class="faq-grid" data-aos="fade-up">
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">What are the prerequisites for joining?</div>
-                        <div class="faq-answer">No prior experience required. Basic education (10th pass) is preferred. Passion for fashion and creativity is most important.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="faq_q1">What are the prerequisites for joining?</div>
+                        <div class="faq-answer" data-i18n="faq_a1">No prior experience required. Basic education (10th pass) is preferred. Passion for fashion and creativity is most important.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Do you provide certificates?</div>
-                        <div class="faq-answer">Yes, we provide completion certificates for all our courses. Our diploma course certificate is recognized in the fashion industry.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="faq_q2">Do you provide certificates?</div>
+                        <div class="faq-answer" data-i18n="faq_a2">Yes, we provide completion certificates for all our courses. Our diploma course certificate is recognized in the fashion industry.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">What is the batch size?</div>
-                        <div class="faq-answer">We maintain small batch sizes (8-12 students) to ensure personalized attention and hands-on learning experience.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="faq_q3">What is the batch size?</div>
+                        <div class="faq-answer" data-i18n="faq_a3">We maintain small batch sizes (8-12 students) to ensure personalized attention and hands-on learning experience.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Do you help with business setup?</div>
-                        <div class="faq-answer">We provide guidance for setting up your own business and connect you with our network of alumni and industry contacts.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="faq_q4">Do you help with business setup?</div>
+                        <div class="faq-answer" data-i18n="faq_a4">We provide guidance for setting up your own business and connect you with our network of alumni and industry contacts.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Can I take multiple courses?</div>
-                        <div class="faq-answer">Yes, you can combine courses. We offer flexible scheduling and discounts for multiple course enrollments.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="faq_q5">Can I take multiple courses?</div>
+                        <div class="faq-answer" data-i18n="faq_a5">Yes, you can combine courses. We offer flexible scheduling and discounts for multiple course enrollments.</div>
                     </div>
                 </div>
             </section>
 
             <!-- Contact Form -->
             <section class="contact-section" data-aos="fade-up">
-                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">Ready to Start Your Fashion Journey?</h2>
-                <p style="text-align: center; font-size: 1.3em;">Fill out the form below or contact us directly.</p>
+                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;" data-i18n="contact_title">Ready to Start Your Fashion Journey?</h2>
+                <p style="text-align: center; font-size: 1.3em;" data-i18n="contact_subtitle">Fill out the form below or contact us directly.</p>
                 <form class="academy-contact-form" onsubmit="submitAcademyInquiry(event)">
                     <div class="form-grid">
                         <div>
                             <div class="form-group">
-                                <label>Full Name *</label>
-                                <input type="text" name="name" required placeholder="Enter your full name">
+                                <label data-i18n="form_name_label">Full Name *</label>
+                                <input type="text" name="name" required placeholder="Enter your full name" data-i18n="form_name_placeholder">
                             </div>
                             <div class="form-group">
-                                <label>Phone Number *</label>
-                                <input type="tel" name="phone" required placeholder="+91XXXXXXXXXX">
+                                <label data-i18n="form_phone_label">Phone Number *</label>
+                                <input type="tel" name="phone" required placeholder="+91XXXXXXXXXX" data-i18n="form_phone_placeholder">
                             </div>
                             <div class="form-group">
-                                <label>Email Address *</label>
-                                <input type="email" name="email" required placeholder="your.email@example.com">
+                                <label data-i18n="form_email_label">Email Address *</label>
+                                <input type="email" name="email" required placeholder="your.email@example.com" data-i18n="form_email_placeholder">
                             </div>
                         </div>
                         <div>
                             <div class="form-group">
-                                <label>Course Interest *</label>
+                                <label data-i18n="form_course_label">Course Interest *</label>
                                 <select name="course" required>
-                                    <option value="">Select a course</option>
-                                    <option value="Professional Fashion Design">Professional Fashion Design (1 Year)</option>
-                                    <option value="Blouse Design">Blouse Design (3 Months)</option>
-                                    <option value="Dress Design">Dress Design (4 Months)</option>
-                                    <option value="Aari Embroidery Basic">Aari Embroidery Basic (2 Months)</option>
-                                    <option value="Aari Embroidery Advanced">Aari Embroidery Advanced (3 Months)</option>
-                                    <option value="Online Aari Embroidery">Online Aari Embroidery (6 Weeks)</option>
+                                    <option value="" data-i18n="form_course_select">Select a course</option>
+                                    <option value="Professional Fashion Design" data-i18n="course_opt_pfd">Professional Fashion Design (1 Year)</option>
+                                    <option value="Blouse Design" data-i18n="course_opt_blouse">Blouse Design (3 Months)</option>
+                                    <option value="Dress Design" data-i18n="course_opt_dress">Dress Design (4 Months)</option>
+                                    <option value="Aari Embroidery Basic" data-i18n="course_opt_aari_basic">Aari Embroidery Basic (2 Months)</option>
+                                    <option value="Aari Embroidery Advanced" data-i18n="course_opt_aari_adv">Aari Embroidery Advanced (3 Months)</option>
+                                    <option value="Online Aari Embroidery" data-i18n="course_opt_online_aari">Online Aari Embroidery (6 Weeks)</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>Preferred Start Date</label>
+                                <label data-i18n="form_date_label">Preferred Start Date</label>
                                 <input type="date" name="preferredDate">
                             </div>
                             <div class="form-group">
-                                <label>Message</label>
-                                <textarea name="message" rows="4" placeholder="Tell us about your fashion goals..."></textarea>
+                                <label data-i18n="form_message_label">Message</label>
+                                <textarea name="message" rows="4" placeholder="Tell us about your fashion goals..." data-i18n="form_message_placeholder"></textarea>
                             </div>
                         </div>
                     </div>
@@ -330,7 +338,7 @@
                         <div class="g-recaptcha" data-sitekey="6Lf8vsorAAAAAJQd9uPgTMw7rWjmmLRLID9L-KR_"></div>
                     </div>
 
-                    <button type="submit" class="submit-btn">📱 Send WhatsApp Inquiry</button>
+                    <button type="submit" class="submit-btn" data-i18n="form_submit">📱 Send WhatsApp Inquiry</button>
                 </form>
             </section>
         </div>
@@ -370,7 +378,7 @@
                         text-shadow: 2px 2px 8px rgba(0,0,0,0.12);
                         letter-spacing: 1px;
                         font-family: 'Georgia', serif;
-                    ">
+                    " data-i18n="online_hero_title">
                         Sujata Fashion Academy — Online
                     </h1>
                     <p style="
@@ -380,7 +388,7 @@
                         margin-bottom: 0;
                         font-family: 'Georgia', serif;
                         text-shadow: 1px 1px 4px rgba(0,0,0,0.08);
-                    ">
+                    " data-i18n="online_subtitle">
                         Learn Fashion Design from Anywhere — Live Instructor-Led &amp; Self-Paced
                     </p>
                 </div>
@@ -388,8 +396,8 @@
 
             <!-- Hero / USP -->
             <section class="hero-section" data-aos="fade-up">
-                <h2 class="hero-title">Your Fashion Classroom, Anywhere</h2>
-                <p class="hero-description">
+                <h2 class="hero-title" data-i18n="online_hero_title">Your Fashion Classroom, Anywhere</h2>
+                <p class="hero-description" data-i18n="online_hero_desc">
                     Sujata Fashion Academy brings 25 years of teaching excellence online.
                     Whether you prefer live instructor-led sessions with real-time feedback
                     or self-paced learning at your convenience, our online courses give you
@@ -398,172 +406,173 @@
                 <div class="mission-box" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; text-align: center;">
                     <div>
                         <span style="font-size: 3em;">👩‍🏫</span>
-                        <h3>Live Instructor-Led</h3>
-                        <p>Real-time classes with personal guidance, Q&amp;A, and feedback — just like being in our classroom.</p>
+                        <h3 data-i18n="online_usp_live_title">Live Instructor-Led</h3>
+                        <p data-i18n="online_usp_live_desc">Real-time classes with personal guidance, Q&amp;A, and feedback — just like being in our classroom.</p>
                     </div>
                     <div>
                         <span style="font-size: 3em;">⏱️</span>
-                        <h3>Self-Paced</h3>
-                        <p>Pre-recorded lessons you can follow at your own speed. Revisit any module anytime.</p>
+                        <h3 data-i18n="online_usp_self_title">Self-Paced</h3>
+                        <p data-i18n="online_usp_self_desc">Pre-recorded lessons you can follow at your own speed. Revisit any module anytime.</p>
                     </div>
                     <div>
                         <span style="font-size: 3em;">🎯</span>
-                        <h3>Same Certificate</h3>
-                        <p>Earn the same industry-recognized completion certificate as our offline students.</p>
+                        <h3 data-i18n="online_usp_cert_title">Same Certificate</h3>
+                        <p data-i18n="online_usp_cert_desc">Earn the same industry-recognized completion certificate as our offline students.</p>
                     </div>
                 </div>
             </section>
 
             <!-- Online Courses Grid -->
             <section class="courses-section">
-                <h2 class="section-title" data-aos="fade-up">Online Courses</h2>
+                <h2 class="section-title" data-aos="fade-up" data-i18n="online_courses_title">Online Courses</h2>
                 <div class="courses-grid">
                     <!-- Online Aari Embroidery -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="100">
-                        <span style="background: #1a5276; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;">🗓️ Live Instructor-Led</span>
-                        <h3 class="course-title">Online Aari Embroidery</h3>
-                        <span class="course-duration">Duration: 6 Weeks</span>
-                        <p class="course-description">
+                        <span style="background: #1a5276; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;" data-i18n="online_badge_live">🗓️ Live Instructor-Led</span>
+                        <h3 class="course-title" data-i18n="online_aari_live_title">Online Aari Embroidery</h3>
+                        <span class="course-duration" data-i18n="online_aari_live_duration">Duration: 6 Weeks</span>
+                        <p class="course-description" data-i18n="online_aari_live_desc">
                             Live instructor-led sessions with real-time demonstrations. Perfect for remote learners who want personal guidance.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="online_aari_live_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Live online demonstrations every week</li>
-                                <li>Interactive practice with instructor feedback</li>
-                                <li>One-on-one video call guidance</li>
-                                <li>Digital pattern sharing &amp; resources</li>
-                                <li>Recorded session backups</li>
+                                <li data-i18n="online_aari_live_feat1">Live online demonstrations every week</li>
+                                <li data-i18n="online_aari_live_feat2">Interactive practice with instructor feedback</li>
+                                <li data-i18n="online_aari_live_feat3">One-on-one video call guidance</li>
+                                <li data-i18n="online_aari_live_feat4">Digital pattern sharing &amp; resources</li>
+                                <li data-i18n="online_aari_live_feat5">Recorded session backups</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Aari Embroidery', '6 Weeks')">Enquire Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Aari Embroidery', '6 Weeks')" data-i18n="enquire_btn">Enquire Now</button>
                     </div>
 
                     <!-- Online Blouse Design -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="200">
-                        <span style="background: #1a5276; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;">🗓️ Live Instructor-Led</span>
-                        <h3 class="course-title">Online Blouse Design</h3>
-                        <span class="course-duration">Duration: 8 Weeks</span>
-                        <p class="course-description">
+                        <span style="background: #1a5276; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;" data-i18n="online_badge_live">🗓️ Live Instructor-Led</span>
+                        <h3 class="course-title" data-i18n="online_blouse_live_title">Online Blouse Design</h3>
+                        <span class="course-duration" data-i18n="online_blouse_live_duration">Duration: 8 Weeks</span>
+                        <p class="course-description" data-i18n="online_blouse_live_desc">
                             Learn blouse designing from home with live classes. Covers traditional and contemporary patterns.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="online_blouse_live_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Traditional blouse patterns live-demonstrated</li>
-                                <li>Modern designs &amp; custom fitting</li>
-                                <li>Live alteration technique demos</li>
-                                <li>Embellishment methods via video</li>
+                                <li data-i18n="online_blouse_live_feat1">Traditional blouse patterns live-demonstrated</li>
+                                <li data-i18n="online_blouse_live_feat2">Modern designs &amp; custom fitting</li>
+                                <li data-i18n="online_blouse_live_feat3">Live alteration technique demos</li>
+                                <li data-i18n="online_blouse_live_feat4">Embellishment methods via video</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Blouse Design', '8 Weeks')">Enquire Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Online Blouse Design', '8 Weeks')" data-i18n="enquire_btn">Enquire Now</button>
                     </div>
 
                     <!-- Self-Paced Fashion Design Fundamentals -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="300">
-                        <span style="background: #2e86c1; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;">📹 Self-Paced</span>
-                        <h3 class="course-title">Fashion Design Fundamentals (Self-Paced)</h3>
-                        <span class="course-duration">Duration: Flexible</span>
-                        <p class="course-description">
+                        <span style="background: #2e86c1; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;" data-i18n="online_badge_self">📹 Self-Paced</span>
+                        <h3 class="course-title" data-i18n="online_self_fd_title">Fashion Design Fundamentals (Self-Paced)</h3>
+                        <span class="course-duration" data-i18n="online_self_fd_duration">Duration: Flexible</span>
+                        <p class="course-description" data-i18n="online_self_fd_desc">
                             Pre-recorded video modules covering the essentials of fashion design. Start anytime, learn at your own pace.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="online_self_fd_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Fashion sketching &amp; illustration basics</li>
-                                <li>Fabric identification &amp; selection</li>
-                                <li>Pattern making fundamentals</li>
-                                <li>Garment construction overview</li>
-                                <li>Downloadable resources &amp; guides</li>
+                                <li data-i18n="online_self_fd_feat1">Fashion sketching &amp; illustration basics</li>
+                                <li data-i18n="online_self_fd_feat2">Fabric identification &amp; selection</li>
+                                <li data-i18n="online_self_fd_feat3">Pattern making fundamentals</li>
+                                <li data-i18n="online_self_fd_feat4">Garment construction overview</li>
+                                <li data-i18n="online_self_fd_feat5">Downloadable resources &amp; guides</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Design Fundamentals (Self-Paced)', 'Flexible')">Enquire Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Fashion Design Fundamentals (Self-Paced)', 'Flexible')" data-i18n="enquire_btn">Enquire Now</button>
                     </div>
 
                     <!-- Self-Paced Aari Embroidery -->
                     <div class="course-card" data-aos="fade-up" data-aos-delay="400">
-                        <span style="background: #2e86c1; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;">📹 Self-Paced</span>
-                        <h3 class="course-title">Aari Embroidery (Self-Paced)</h3>
-                        <span class="course-duration">Duration: Flexible</span>
-                        <p class="course-description">
+                        <span style="background: #2e86c1; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; display: inline-block; margin-bottom: 10px;" data-i18n="online_badge_self">📹 Self-Paced</span>
+                        <h3 class="course-title" data-i18n="online_self_aari_title">Aari Embroidery (Self-Paced)</h3>
+                        <span class="course-duration" data-i18n="online_self_aari_duration">Duration: Flexible</span>
+                        <p class="course-description" data-i18n="online_self_aari_desc">
                             Recorded step-by-step Aari embroidery lessons you can follow anytime, from anywhere.
                         </p>
                         <div class="course-features">
-                            <h4>What You'll Learn:</h4>
+                            <h4 data-i18n="online_self_aari_learn">What You'll Learn:</h4>
                             <ul>
-                                <li>Basic to advanced Aari stitches on video</li>
-                                <li>Thread work &amp; beading techniques</li>
-                                <li>Pattern tracing &amp; planning</li>
-                                <li>Commercial design applications</li>
+                                <li data-i18n="online_self_aari_feat1">Basic to advanced Aari stitches on video</li>
+                                <li data-i18n="online_self_aari_feat2">Thread work &amp; beading techniques</li>
+                                <li data-i18n="online_self_aari_feat3">Pattern tracing &amp; planning</li>
+                                <li data-i18n="online_self_aari_feat4">Commercial design applications</li>
                             </ul>
                         </div>
-                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery (Self-Paced)', 'Flexible')">Enquire Now</button>
+                        <button class="enrol-btn" onclick="inquireAboutCourse('Aari Embroidery (Self-Paced)', 'Flexible')" data-i18n="enquire_btn">Enquire Now</button>
                     </div>
                 </div>
             </section>
 
             <!-- Why Choose Online at SFA -->
             <section style="background: #f8f9fa; padding: 60px 20px; margin: 60px 0; border-radius: 20px;" data-aos="fade-up">
-                <h2 class="section-title">Why Choose Online with Sujata Fashion Academy?</h2>
+                <h2 class="section-title" data-i18n="why_online_title">Why Choose Online with Sujata Fashion Academy?</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                     <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center;">
                         <span style="font-size: 2.5em;">🎓</span>
-                        <h4>Same Faculty</h4>
-                        <p style="color: #666;">Learn from the same experienced instructors who teach our offline courses.</p>
+                        <h4 data-i18n="why_faculty_title">Same Faculty</h4>
+                        <p style="color: #666;" data-i18n="why_faculty_desc">Learn from the same experienced instructors who teach our offline courses.</p>
                     </div>
                     <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center;">
                         <span style="font-size: 2.5em;">🔄</span>
-                        <h4>Flexible Scheduling</h4>
-                        <p style="color: #666;">Choose batch timings that suit your routine. Self-paced? No deadlines.</p>
+                        <h4 data-i18n="why_schedule_title">Flexible Scheduling</h4>
+                        <p style="color: #666;" data-i18n="why_schedule_desc">Choose batch timings that suit your routine. Self-paced? No deadlines.</p>
                     </div>
                     <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center;">
                         <span style="font-size: 2.5em;">🤝</span>
-                        <h4>Community Access</h4>
-                        <p style="color: #666;">Join our student community group for peer support and alumni networking.</p>
+                        <h4 data-i18n="why_community_title">Community Access</h4>
+                        <p style="color: #666;" data-i18n="why_community_desc">Join our student community group for peer support and alumni networking.</p>
                     </div>
                     <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center;">
                         <span style="font-size: 2.5em;">📜</span>
-                        <h4>Certification</h4>
-                        <p style="color: #666;">Get the same industry-recognized certificate as our classroom students.</p>
+                        <h4 data-i18n="why_cert_title">Certification</h4>
+                        <p style="color: #666;" data-i18n="why_cert_desc">Get the same industry-recognized certificate as our classroom students.</p>
                     </div>
                 </div>
             </section>
 
             <!-- Online FAQ -->
             <section class="faq-section">
-                <h2 class="section-title" data-aos="fade-up">Online Course FAQ</h2>
+                <h2 class="section-title" data-aos="fade-up" data-i18n="online_faq_title">Online Course FAQ</h2>
                 <div class="faq-grid" data-aos="fade-up">
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">How do live online sessions work?</div>
-                        <div class="faq-answer">Live sessions are conducted via video call. You can see the instructor's demonstrations in real-time, ask questions, and get instant feedback. Sessions are also recorded so you can review them later.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="online_faq_q1">How do live online sessions work?</div>
+                        <div class="faq-answer" data-i18n="online_faq_a1">Live sessions are conducted via video call. You can see the instructor's demonstrations in real-time, ask questions, and get instant feedback. Sessions are also recorded so you can review them later.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">What equipment do I need for online courses?</div>
-                        <div class="faq-answer">A smartphone or laptop with internet connectivity is sufficient. For embroidery courses, you'll need basic Aari tools which we can help you source locally.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="online_faq_q2">What equipment do I need for online courses?</div>
+                        <div class="faq-answer" data-i18n="online_faq_a2">A smartphone or laptop with internet connectivity is sufficient. For embroidery courses, you'll need basic Aari tools which we can help you source locally.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Can I switch from self-paced to instructor-led?</div>
-                        <div class="faq-answer">Yes, you can upgrade at any time. The fee difference is adjusted pro-rata based on your progress.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="online_faq_q3">Can I switch from self-paced to instructor-led?</div>
+                        <div class="faq-answer" data-i18n="online_faq_a3">Yes, you can upgrade at any time. The fee difference is adjusted pro-rata based on your progress.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Do online students get the same certificate as offline?</div>
-                        <div class="faq-answer">Yes. The Sujata Fashion Academy certificate is awarded to all students who complete the course requirements, regardless of mode of study.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="online_faq_q4">Do online students get the same certificate as offline?</div>
+                        <div class="faq-answer" data-i18n="online_faq_a4">Yes. The Sujata Fashion Academy certificate is awarded to all students who complete the course requirements, regardless of mode of study.</div>
                     </div>
                     <div class="faq-item">
-                        <div class="faq-question" onclick="toggleFAQ(this)">Is there a trial class available?</div>
-                        <div class="faq-answer">Yes, we offer a free trial session for all online courses. Contact us via WhatsApp to schedule yours.</div>
+                        <div class="faq-question" onclick="toggleFAQ(this)" data-i18n="online_faq_q5">Is there a trial class available?</div>
+                        <div class="faq-answer" data-i18n="online_faq_a5">Yes, we offer a free trial session for all online courses. Contact us via WhatsApp to schedule yours.</div>
                     </div>
                 </div>
             </section>
 
             <!-- Online Contact -->
             <section class="contact-section" data-aos="fade-up" style="background: linear-gradient(135deg, #1a5276, #2e86c1);">
-                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">Start Learning Online Today</h2>
-                <p style="text-align: center; font-size: 1.3em; margin-bottom: 30px;">Fill the form or message us on WhatsApp to get started.</p>
+                <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;" data-i18n="online_cta_title">Start Learning Online Today</h2>
+                <p style="text-align: center; font-size: 1.3em; margin-bottom: 30px;" data-i18n="online_cta_sub">Fill the form or message us on WhatsApp to get started.</p>
                 <div style="text-align: center;">
                     <a href="https://wa.me/919763416561?text=Hi!%20I'm%20interested%20in%20online%20fashion%20courses%20at%20Sujata%20Fashion%20Academy.%20Please%20share%20details."
                        target="_blank"
-                       style="display: inline-block; background: #25D366; color: white; padding: 18px 50px; border-radius: 50px; font-size: 1.2em; font-weight: bold; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
+                       style="display: inline-block; background: #25D366; color: white; padding: 18px 50px; border-radius: 50px; font-size: 1.2em; font-weight: bold; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;"
+                       data-i18n="online_cta_btn">
                         💬 Enquire on WhatsApp
                     </a>
                 </div>
@@ -573,10 +582,10 @@
         <!-- Shop Content -->
         <div id="shop-content" class="tab-content">
             <section data-aos="fade-up">
-                <h2 class="section-title">Designer Fashion Shop</h2>
-                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">Premium quality designer outfits crafted with excellence</p>
+                <h2 class="section-title" data-i18n="shop_title">Designer Fashion Shop</h2>
+                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;" data-i18n="shop_desc">Premium quality designer outfits crafted with excellence</p>
                 <div id="shop-products" class="products-grid">
-                    <div class="loading">Loading shop products...</div>
+                    <div class="loading" data-i18n="loading_products">Loading shop products...</div>
                 </div>
             </section>
         </div>
@@ -584,10 +593,10 @@
         <!-- Rent Content -->
         <div id="rent-content" class="tab-content">
             <section data-aos="fade-up">
-                <h2 class="section-title">Premium Rental Collection</h2>
-                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;">Exquisite outfits for your special occasions</p>
+                <h2 class="section-title" data-i18n="rent_title">Premium Rental Collection</h2>
+                <p style="text-align: center; font-size: 1.2em; margin-bottom: 40px;" data-i18n="rent_desc">Exquisite outfits for your special occasions</p>
                 <div id="rent-products" class="products-grid">
-                    <div class="loading">Loading rental products...</div>
+                    <div class="loading" data-i18n="loading_products">Loading rental products...</div>
                 </div>
             </section>
         </div>
@@ -1091,8 +1100,8 @@ Thank you! 🙏`;
             ">
                 <!-- Brand -->
                 <div>
-                    <h3>Sujata Fashions</h3>
-                    <p style="line-height: 1.8; font-size: 0.95em; color: #aaa;">
+                    <h3 data-i18n="footer_brand_title">Sujata Fashions</h3>
+                    <p style="line-height: 1.8; font-size: 0.95em; color: #aaa;" data-i18n="footer_brand_desc">
                         25 years of crafting designs and designers.
                         Fashion apparel, occasion wear rental, and
                         award-winning fashion education — offline and online.
@@ -1101,30 +1110,30 @@ Thank you! 🙏`;
 
                 <!-- Quick Links -->
                 <div>
-                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;">Quick Links</h4>
+                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;" data-i18n="footer_quicklinks">Quick Links</h4>
                     <ul style="list-style: none; padding: 0; margin: 0;">
-                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('academy'); event.preventDefault();">Offline Courses</a></li>
-                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('online'); event.preventDefault();">Online Courses</a></li>
-                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('shop'); event.preventDefault();">Shop Apparel</a></li>
-                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('rent'); event.preventDefault();">Rental</a></li>
-                        <li style="margin-bottom: 8px;"><a href="stylist-test.html" style="color: #bbb; text-decoration: none;">Stylist Test</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('academy'); event.preventDefault();" data-i18n="footer_offline">Offline Courses</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('online'); event.preventDefault();" data-i18n="footer_online">Online Courses</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('shop'); event.preventDefault();" data-i18n="footer_shop_link">Shop Apparel</a></li>
+                        <li style="margin-bottom: 8px;"><a href="/" style="color: #bbb; text-decoration: none;" onclick="switchTab('rent'); event.preventDefault();" data-i18n="footer_rent_link">Rental</a></li>
+                        <li style="margin-bottom: 8px;"><a href="stylist-test.html" style="color: #bbb; text-decoration: none;" data-i18n="footer_stylist">Stylist Test</a></li>
                     </ul>
                 </div>
 
                 <!-- Contact -->
                 <div>
-                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;">Contact</h4>
+                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;" data-i18n="footer_contact">Contact</h4>
                     <p style="line-height: 1.8; font-size: 0.95em; color: #aaa;">
-                        📞 <a href="tel:+919763416561" style="color: #bbb; text-decoration: none;">+91 97634 16561</a><br>
-                        💬 <a href="https://wa.me/919763416561" target="_blank" style="color: #bbb; text-decoration: none;">WhatsApp</a><br>
-                        📍 Pune, India
+                        📞 <a href="tel:+919****6561" style="color: #bbb; text-decoration: none;">+91 97634 16561</a><br>
+                        💬 <a href="https://wa.me/919763416561" target="_blank" style="color: #bbb; text-decoration: none;" data-i18n="footer_whatsapp">WhatsApp</a><br>
+                        📍 <span data-i18n="footer_location">Pune, India</span>
                     </p>
                 </div>
 
                 <!-- Trust Badges -->
                 <div>
-                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;">Why Us</h4>
-                    <p style="line-height: 1.8; font-size: 0.95em; color: #aaa;">
+                    <h4 style="color: #fff; margin-bottom: 15px; font-size: 1em;" data-i18n="footer_whyrus">Why Us</h4>
+                    <p style="line-height: 1.8; font-size: 0.95em; color: #aaa;" data-i18n="footer_why_content">
                         ✓ 25+ Years Experience<br>
                         ✓ 1000+ Students Trained<br>
                         ✓ Industry Certification<br>
@@ -1146,8 +1155,16 @@ Thank you! 🙏`;
                 font-size: 0.85em;
                 color: #777;
             ">
-                <span>&copy; 2025 Sujata Fashions. All rights reserved.</span>
+                <span data-i18n="footer_copyright">&copy; 2025 Sujata Fashions. All rights reserved.</span>
                 <span>
+                    <span class="language-toggle" style="margin-right: 10px;">
+                        <label for="lang-select-footer" style="margin-right: 5px;">🌐</label>
+                        <select id="lang-select-footer" class="lang-select" onchange="changeLanguage(this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #555; background: #222; color: #ddd; font-size: 0.9em;">
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी</option>
+                            <option value="mr">मराठी</option>
+                        </select>
+                    </span>
                     Built with care in Pune &middot;
                     <a href="https://github.com/ccoolavi/sujatafashion.github.io" target="_blank" style="color: #777; text-decoration: none;">GitHub</a>
                 </span>
@@ -1162,5 +1179,6 @@ Thank you! 🙏`;
         </a>
     </div>
 
+    <script src="js/translations.js?v=3"></script>
 </body>
 </html>

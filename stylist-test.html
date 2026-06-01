@@ -44,15 +44,24 @@
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
+<!-- Language Toggle -->
+<div style="position: fixed; top: 15px; right: 15px; z-index: 1000; display: flex; align-items: center; gap: 6px; background: white; padding: 6px 12px; border-radius: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);">
+    <label for="lang-select-stylist" style="font-size: 1.1em;">🌐</label>
+    <select id="lang-select-stylist" class="lang-select" onchange="changeLanguage(this.value)" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ddd; background: white; font-size: 0.9em; cursor: pointer;">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+    </select>
+</div>
 <div id="consent" style="display:flex">
   <div>
-    <h2>Before we start...</h2>
-    <p><b>Sujata Fashion</b> will only use your answers/images to help you find fashion styles.<br>
-      We don't sell or share your data. Your session is private.</p>
-    <p style="font-size:.97em;color:#eec;">By continuing you consent to this.<br>
-      <span class="mininote">You can end at any time.</span>
+    <h2 data-i18n="consent_title">Before we start...</h2>
+    <p><b data-i18n="brand_name">Sujata Fashion</b> <span data-i18n="consent_body">will only use your answers/images to help you find fashion styles.<br>
+      We don't sell or share your data. Your session is private.</span></p>
+    <p style="font-size:.97em;color:#eec;"><span data-i18n="consent_continue">By continuing you consent to this.</span><br>
+      <span class="mininote" data-i18n="consent_endnote">You can end at any time.</span>
     </p>
-    <button onclick="acceptConsent()">I Consent & Start</button>
+    <button onclick="acceptConsent()" data-i18n="consent_btn">I Consent & Start</button>
   </div>
 </div>
 <div id="main" style="display:none;">
@@ -60,20 +69,20 @@
       data-sitekey="6Lf8vsorAAAAAJQd9uPgTMw7rWjmmLRLID9L-KR_"
       data-callback="captchaPassed"></div>
   <div id="startwrap" style="display:flex;flex-direction:column;align-items:center;">
-    <button id="startbtn" class="bigbutton">Start Styling Your New Outfit</button>
+    <button id="startbtn" class="bigbutton" data-i18n="start_btn">Start Styling Your New Outfit</button>
   </div>
   <div id="modal" style="display:none;">
-    <h3>Who are you?</h3>
-    <button class="optionbtn" onclick="chooseType('newbie')">I am a Newbie</button>
-    <button class="optionbtn" onclick="chooseType('professional')">I am a Professional</button>
+    <h3 data-i18n="who_are_you">Who are you?</h3>
+    <button class="optionbtn" onclick="chooseType('newbie')" data-i18n="newbie_btn">I am a Newbie</button>
+    <button class="optionbtn" onclick="chooseType('professional')" data-i18n="pro_btn">I am a Professional</button>
   </div>
   <div id="chatwrap" style="display:none;flex-direction:column;align-items:center;">
     <div id="chatbox"></div>
     <form id="answerform" style="display:flex;margin-top:11px;" onsubmit="return sendAnswer()">
-      <input id="answerinput" type="text" autocomplete="off" disabled placeholder="Type your answer...">
-      <button id="sendbtn" type="submit" disabled>Send</button>
+      <input id="answerinput" type="text" autocomplete="off" disabled data-i18n-placeholder="answer_placeholder" placeholder="Type your answer...">
+      <button id="sendbtn" type="submit" disabled data-i18n="send_btn">Send</button>
     </form>
-    <div id="loader" style="display:none;">Crafting your look...</div>
+    <div id="loader" style="display:none;" data-i18n="loader_text">Crafting your look...</div>
     <div class="options" id="finaloptions" style="display:none"></div>
   </div>
 </div>
@@ -204,5 +213,6 @@ function sendFinal(choice){
   });
 }
 </script>
+<script src="js/translations.js?v=3"></script>
 </body>
 </html>
