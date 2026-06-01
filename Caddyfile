@@ -1,0 +1,14 @@
+# Sujata Fashions — Local Dev Server
+# Caddy v2 config
+# Start:   caddy run
+# Browse:  http://localhost:8080
+
+http://localhost:8080 {
+    root * /home/ubuntu/sujatafashion.github.io
+    file_server browse
+    encode gzip
+    header {
+        -Server
+        Cache-Control "public, max-age=3600"
+    }
+}
