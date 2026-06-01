@@ -1,0 +1,6 @@
+# Allow all crawlers — public site
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sujatafashion.in/sitemap.xml

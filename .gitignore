@@ -1,0 +1,20 @@
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Environment
+.env
+.env.local
+
+# Node (if XLSX used locally)
+node_modules/
+
+# Generated
+*.log
