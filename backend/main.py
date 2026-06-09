@@ -17,6 +17,7 @@ from .auth import (
     UploadResponse,
     SubscribeRequest, SubscriberUpdate, SubscriberResponse,
     BookingCreate, BookingUpdate, BookingResponse,
+    OrderCreate, OrderUpdate, OrderResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -807,6 +808,163 @@ async def upload_image(file: UploadFile = File(...)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Image upload failed: {str(e)}",
         )
+
+
+# --- Shop Order API Endpoints ---
+
+
+@app.get("/api/orders", response_model=list[OrderResponse])
+async def list_orders(status: str = None, limit: int = 100, offset: int = 0):
+    """List purchase orders with optional status filter and pagination."""
+    conn = get_connection()
+    try:
+        query = "FROM orders"
+        params = []
+        if status:
+            query += " WHERE status = ?"
+            params.append(status)
+
+        # Get total count
+        count_row = conn.execute(f"SELECT COUNT(*) as cnt {query}", params).fetchone()
+        total = count_row["cnt"] if count_row else 0
+
+        full_query = f"SELECT * {query} ORDER BY created_at DESC LIMIT ? OFFSET ?"
+        rows = conn.execute(full_query, params + [min(limit, 100), offset]).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(OrderResponse(**d))
+
+        from starlette.responses import Response
+        import json as _json
+        body = _json.dumps([r.model_dump() for r in results], default=str)
+        return Response(
+            content=body,
+            media_type="application/json",
+            headers={"X-Total-Count": str(total)}
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/api/orders/{order_id}", response_model=OrderResponse)
+async def get_order(order_id: int):
+    """Get a single purchase order by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Order not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return OrderResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.post("/api/orders", status_code=201, response_model=OrderResponse)
+async def create_order(order: OrderCreate):
+    """Create a new purchase order for a shop product."""
+    conn = get_connection()
+    try:
+        # Verify product exists
+        product = conn.execute(
+            "SELECT id, type, price FROM products WHERE id = ?", (order.product_id,)
+        ).fetchone()
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        if product["type"] != "shop":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Orders are only available for shop products",
+            )
+
+        cursor = conn.execute(
+            """INSERT INTO orders
+               (product_id, customer_name, customer_phone, customer_email,
+                quantity, total_amount, shipping_address, notes)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                order.product_id, order.customer_name, order.customer_phone,
+                order.customer_email, order.quantity,
+                order.total_amount, order.shipping_address, order.notes,
+            ),
+        )
+        conn.commit()
+        order_id = cursor.lastrowid
+        row = conn.execute(
+            "SELECT * FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return OrderResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/orders/{order_id}", response_model=OrderResponse)
+async def update_order(order_id: int, order: OrderUpdate):
+    """Update an existing purchase order."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Order not found")
+
+        fields = {}
+        if order.customer_name is not None:
+            fields["customer_name"] = order.customer_name
+        if order.customer_phone is not None:
+            fields["customer_phone"] = order.customer_phone
+        if order.customer_email is not None:
+            fields["customer_email"] = order.customer_email
+        if order.quantity is not None:
+            fields["quantity"] = order.quantity
+        if order.total_amount is not None:
+            fields["total_amount"] = order.total_amount
+        if order.shipping_address is not None:
+            fields["shipping_address"] = order.shipping_address
+        if order.status is not None:
+            fields["status"] = order.status
+        if order.notes is not None:
+            fields["notes"] = order.notes
+
+        if fields:
+            set_clause = ", ".join(f"{k} = ?" for k in fields)
+            values = list(fields.values()) + [order_id]
+            conn.execute(f"UPDATE orders SET {set_clause} WHERE id = ?", values)
+            conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return OrderResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/orders/{order_id}")
+async def delete_order(order_id: int):
+    """Delete a purchase order by ID."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Order not found")
+        conn.execute("DELETE FROM orders WHERE id = ?", (order_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": order_id}
+    finally:
+        conn.close()
 
 
 # --- Rental Booking API Endpoints ---

@@ -86,6 +86,14 @@
 - **Tests**: 16 test cases covering CRUD, status workflow, filtering, product validation, and error handling.
 - **Status**: ✅ Implemented and tested (87/87 tests passing).
 
+### 12. Shop Order Management API (Task 23)
+- **Purpose**: CRUD API for purchasing shop-type products with customer info, quantity, shipping address, and status workflow.
+- **Endpoints**: `GET /api/orders` (list with status filter + pagination + X-Total-Count), `GET /api/orders/{id}`, `POST /api/orders`, `PUT /api/orders/{id}`, `DELETE /api/orders/{id}`
+- **Features**: Validates product exists and is shop-type, quantity tracking, shipping address management, status tracking (pending/confirmed/shipped/delivered/cancelled), Pydantic validation.
+- **Database Table**: `orders` (id, product_id, customer_name, customer_phone, customer_email, quantity, total_amount, shipping_address, status, notes, created_at)
+- **Tests**: 16 test cases covering CRUD, status workflow, filtering, product type validation, and error handling.
+- **Status**: ✅ Implemented and tested (103/103 tests passing).
+
 ## Next Steps
 
 1. Continue Stage 2: Data & Integration tasks (20-30)

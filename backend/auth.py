@@ -124,6 +124,44 @@ class SubscriberResponse(BaseModel):
     source: str = "website"
     created_at: str
 
+# --- Order/Purchase Models ---
+
+class OrderCreate(BaseModel):
+    """Request model for creating a purchase order."""
+    product_id: int = Field(..., description="ID of the product to purchase")
+    customer_name: str = Field(..., min_length=2, max_length=200, description="Customer name")
+    customer_phone: str = Field(..., min_length=7, max_length=20, description="Customer phone number")
+    customer_email: str | None = Field(None, description="Customer email address")
+    quantity: int = Field(1, ge=1, le=100, description="Quantity to purchase")
+    total_amount: float | None = Field(None, ge=0, description="Total order amount")
+    shipping_address: str | None = Field(None, max_length=500, description="Shipping address")
+    notes: str | None = Field(None, max_length=2000, description="Order notes")
+
+class OrderUpdate(BaseModel):
+    """Request model for updating an order."""
+    customer_name: str | None = Field(None, min_length=2, max_length=200)
+    customer_phone: str | None = Field(None, min_length=7, max_length=20)
+    customer_email: str | None = None
+    quantity: int | None = Field(None, ge=1, le=100)
+    total_amount: float | None = Field(None, ge=0)
+    shipping_address: str | None = Field(None, max_length=500)
+    status: str | None = Field(None, max_length=50, description="Order status")
+    notes: str | None = Field(None, max_length=2000)
+
+class OrderResponse(BaseModel):
+    """Response model for a purchase order."""
+    id: int
+    product_id: int
+    customer_name: str
+    customer_phone: str
+    customer_email: str | None = None
+    quantity: int = 1
+    total_amount: float | None = None
+    shipping_address: str | None = None
+    status: str = "pending"
+    notes: str | None = None
+    created_at: str
+
 # --- Rental Booking Models ---
 
 class BookingCreate(BaseModel):

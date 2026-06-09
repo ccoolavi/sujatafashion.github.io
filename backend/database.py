@@ -124,6 +124,24 @@ def init_db():
         )
     """)
 
+    # Shop orders table (for purchase of shop-type products)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT NOT NULL,
+            customer_email TEXT,
+            quantity INTEGER DEFAULT 1,
+            total_amount REAL,
+            shipping_address TEXT,
+            status TEXT DEFAULT 'pending',
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        )
+    """)
+
     # Newsletter subscriptions table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS subscriptions (
