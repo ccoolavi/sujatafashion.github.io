@@ -62,6 +62,25 @@ class InquiryResponse(BaseModel):
     source: str = "website"
     created_at: str
 
+class TestimonialCreate(BaseModel):
+    """Request model for creating a testimonial."""
+    name: str = Field(..., min_length=2, max_length=200, description="Student name")
+    course: str | None = Field(None, max_length=200, description="Course taken")
+    review: str | None = Field(None, max_length=5000, description="Testimonial text")
+    video_url: str | None = Field(None, max_length=500, description="YouTube video URL")
+    rating: int | None = Field(5, ge=1, le=5, description="Rating (1-5)")
+
+class TestimonialResponse(BaseModel):
+    """Response model for a testimonial."""
+    id: int
+    name: str
+    course: str | None = None
+    review: str | None = None
+    video_url: str | None = None
+    rating: int = 5
+    is_active: int = 1
+    created_at: str
+
 # --- Password Utilities ---
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

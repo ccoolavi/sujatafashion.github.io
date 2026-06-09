@@ -28,6 +28,15 @@
 - **Tests**: 1 new test for validation rejection (invalid email, missing fields, short name).
 - **Status**: ✅ Implemented and tested.
 
+### 5. Testimonials API (Task 16)
+- **Purpose**: Backend CRUD API for student video testimonials with database-backed storage.
+- **Endpoints**: `GET /api/testimonials`, `GET /api/testimonials/{id}`, `POST /api/testimonials`, `PUT /api/testimonials/{id}`, `DELETE /api/testimonials/{id}`
+- **Features**: Full CRUD with query-parameter partial updates, active-only filtering, Pydantic validation for name length (2-200), rating (1-5), and field constraints.
+- **Models**: `TestimonialCreate` (request), `TestimonialResponse` (response) in `backend/auth.py`
+- **Database Table**: `testimonials` (id, name, course, review, video_url, rating, is_active, created_at)
+- **Tests**: 11 test cases covering CRUD, validation, filtering, and edge cases.
+- **Status**: ✅ Implemented and tested (32/32 tests passing).
+
 ## Next Steps
 
 1. Begin Stage 3: Backend Development

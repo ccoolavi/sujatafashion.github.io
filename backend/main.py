@@ -11,6 +11,7 @@ from .database import get_connection, init_db
 from .auth import (
     UserCreate, UserLogin, UserResponse, Token,
     InquiryCreate, InquiryResponse,
+    TestimonialCreate, TestimonialResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -180,6 +181,131 @@ async def create_inquiry(inquiry: InquiryCreate):
         )
         conn.commit()
         return {"status": "ok", "id": cursor.lastrowid}
+    finally:
+        conn.close()
+
+
+# --- Testimonials API Endpoints ---
+
+
+@app.get("/api/testimonials", response_model=list[TestimonialResponse])
+async def list_testimonials(active_only: bool = True):
+    """List testimonials with optional active-only filter."""
+    conn = get_connection()
+    try:
+        query = "SELECT * FROM testimonials"
+        params = []
+        if active_only:
+            query += " WHERE is_active = 1"
+        query += " ORDER BY created_at DESC"
+        rows = conn.execute(query, params).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(TestimonialResponse(**d))
+        return results
+    finally:
+        conn.close()
+
+
+@app.get("/api/testimonials/{testimonial_id}", response_model=TestimonialResponse)
+async def get_testimonial(testimonial_id: int):
+    """Get a single testimonial by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM testimonials WHERE id = ?", (testimonial_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Testimonial not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return TestimonialResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.post("/api/testimonials", status_code=201, response_model=TestimonialResponse)
+async def create_testimonial(testimonial: TestimonialCreate):
+    """Create a new testimonial."""
+    conn = get_connection()
+    try:
+        cursor = conn.execute(
+            """INSERT INTO testimonials (name, course, review, video_url, rating)
+               VALUES (?, ?, ?, ?, ?)""",
+            (testimonial.name, testimonial.course, testimonial.review, testimonial.video_url, testimonial.rating)
+        )
+        conn.commit()
+        testimonial_id = cursor.lastrowid
+        row = conn.execute(
+            "SELECT * FROM testimonials WHERE id = ?", (testimonial_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return TestimonialResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/testimonials/{testimonial_id}", response_model=TestimonialResponse)
+async def update_testimonial(
+    testimonial_id: int, name: str = None, course: str = None,
+    review: str = None, video_url: str = None, rating: int = None,
+    is_active: bool = None
+):
+    """Update an existing testimonial."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM testimonials WHERE id = ?", (testimonial_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Testimonial not found")
+
+        fields = {}
+        if name is not None: fields["name"] = name
+        if course is not None: fields["course"] = course
+        if review is not None: fields["review"] = review
+        if video_url is not None: fields["video_url"] = video_url
+        if rating is not None: fields["rating"] = rating
+        if is_active is not None: fields["is_active"] = 1 if is_active else 0
+
+        if not fields:
+            d = dict(existing)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            return TestimonialResponse(**d)
+
+        set_clause = ", ".join(f"{k} = ?" for k in fields)
+        values = list(fields.values()) + [testimonial_id]
+        conn.execute(
+            f"UPDATE testimonials SET {set_clause} WHERE id = ?", values
+        )
+        conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM testimonials WHERE id = ?", (testimonial_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return TestimonialResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/testimonials/{testimonial_id}")
+async def delete_testimonial(testimonial_id: int):
+    """Delete a testimonial by ID."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM testimonials WHERE id = ?", (testimonial_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Testimonial not found")
+        conn.execute("DELETE FROM testimonials WHERE id = ?", (testimonial_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": testimonial_id}
     finally:
         conn.close()
 
