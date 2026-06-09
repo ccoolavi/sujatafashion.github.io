@@ -193,23 +193,37 @@ async def create_inquiry(inquiry: InquiryCreate):
 # --- Testimonials API Endpoints ---
 
 
-@app.get("/api/testimonials", response_model=list[TestimonialResponse])
-async def list_testimonials(active_only: bool = True):
-    """List testimonials with optional active-only filter."""
+@app.get("/api/testimonials")
+async def list_testimonials(active_only: bool = True, limit: int = 100, offset: int = 0):
+    """List testimonials with optional active-only filter and pagination."""
     conn = get_connection()
     try:
-        query = "SELECT * FROM testimonials"
+        query = "FROM testimonials"
         params = []
         if active_only:
             query += " WHERE is_active = 1"
-        query += " ORDER BY created_at DESC"
-        rows = conn.execute(query, params).fetchall()
+
+        # Get total count
+        count_row = conn.execute(f"SELECT COUNT(*) as cnt {query}", params).fetchone()
+        total = count_row["cnt"] if count_row else 0
+
+        # Fetch paginated results
+        full_query = f"SELECT * {query} ORDER BY created_at DESC LIMIT ? OFFSET ?"
+        rows = conn.execute(full_query, params + [min(limit, 100), offset]).fetchall()
         results = []
         for row in rows:
             d = dict(row)
             d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
             results.append(TestimonialResponse(**d))
-        return results
+
+        from starlette.responses import Response
+        import json as _json
+        body = _json.dumps([r.model_dump() for r in results], default=str)
+        return Response(
+            content=body,
+            media_type="application/json",
+            headers={"X-Total-Count": str(total)}
+        )
     finally:
         conn.close()
 
@@ -318,23 +332,46 @@ async def delete_testimonial(testimonial_id: int):
 # --- Product API Endpoints ---
 
 @app.get("/api/products")
-async def list_products(category: str = None, type: str = None, active_only: bool = True):
-    """List products with optional filters."""
+async def list_products(
+    category: str = None, type: str = None, active_only: bool = True,
+    limit: int = 100, offset: int = 0, search: str = None
+):
+    """List products with optional filters, pagination, and text search."""
     conn = get_connection()
     try:
-        query = "SELECT * FROM products WHERE 1=1"
+        base_query = "FROM products WHERE 1=1"
         params = []
         if active_only:
-            query += " AND is_active = 1"
+            base_query += " AND is_active = 1"
         if category:
-            query += " AND category = ?"
+            base_query += " AND category = ?"
             params.append(category)
         if type:
-            query += " AND type = ?"
+            base_query += " AND type = ?"
             params.append(type)
-        query += " ORDER BY created_at DESC"
-        rows = conn.execute(query, params).fetchall()
-        return [dict(row) for row in rows]
+        if search:
+            base_query += " AND (name LIKE ? OR description LIKE ?)"
+            params.extend([f"%{search}%", f"%{search}%"])
+
+        # Get total count
+        count_row = conn.execute(f"SELECT COUNT(*) as cnt {base_query}", params).fetchone()
+        total = count_row["cnt"] if count_row else 0
+
+        # Fetch paginated results
+        query = f"SELECT * {base_query} ORDER BY created_at DESC LIMIT ? OFFSET ?"
+        data_params = params + [min(limit, 100), offset]
+        rows = conn.execute(query, data_params).fetchall()
+        result = [dict(row) for row in rows]
+
+        # Create response with total count header
+        from starlette.responses import Response
+        import json as _json
+        body = _json.dumps(result, default=str)
+        return Response(
+            content=body,
+            media_type="application/json",
+            headers={"X-Total-Count": str(total)}
+        )
     finally:
         conn.close()
 

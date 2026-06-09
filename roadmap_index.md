@@ -1,0 +1,154 @@
+# SFA Project Roadmap
+
+This file tracks the progress of the Sujata Fashion (SFA) project implementation.
+
+- 1. [STAGE 1] Infrastructure Scaffolding: Sub-task 1
+- 2. [STAGE 1] Infrastructure Scaffolding: Sub-task 2
+- 3. [STAGE 1] Infrastructure Scaffolding: Sub-task 3
+- 4. [STAGE 1] Infrastructure Scaffolding: Sub-task 4
+- 5. [STAGE 1] Infrastructure Scaffolding: Sub-task 5
+- 6. [STAGE 1] Infrastructure Scaffolding: Sub-task 6
+- 7. [STAGE 1] Infrastructure Scaffolding: Sub-task 7
+- 8. [STAGE 1] Infrastructure Scaffolding: Sub-task 8
+- 9. [STAGE 1] Infrastructure Scaffolding: Sub-task 9
+- 10. [STAGE 1] Infrastructure Scaffolding: Sub-task 10
+- 11. [STAGE 2] Data & Integration: Task 11
+- 12. [STAGE 2] Data & Integration: Task 12
+- 13. [STAGE 2] Data & Integration: Task 13
+- 14. [STAGE 2] Data & Integration: Task 14
+- 15. [STAGE 2] Data & Integration: Task 15
+- 16. [STAGE 2] Data & Integration: Task 16
+- 17. [STAGE 2] Data & Integration: Task 17
+- 18. [STAGE 2] Data & Integration: Task 18
+- 19. [STAGE 2] Data & Integration: Task 19
+- 20. [STAGE 2] Data & Integration: Task 20
+- 21. [STAGE 2] Data & Integration: Task 21
+- 22. [STAGE 2] Data & Integration: Task 22
+- 23. [STAGE 2] Data & Integration: Task 23
+- 24. [STAGE 2] Data & Integration: Task 24
+- 25. [STAGE 2] Data & Integration: Task 25
+- 26. [STAGE 2] Data & Integration: Task 26
+- 27. [STAGE 2] Data & Integration: Task 27
+- 28. [STAGE 2] Data & Integration: Task 28
+- 29. [STAGE 2] Data & Integration: Task 29
+- 30. [STAGE 2] Data & Integration: Task 30
+- 31. [STAGE 3] Backend Development: Task 31
+- 32. [STAGE 3] Backend Development: Task 32
+- 33. [STAGE 3] Backend Development: Task 33
+- 34. [STAGE 3] Backend Development: Task 34
+- 35. [STAGE 3] Backend Development: Task 35
+- 36. [STAGE 3] Backend Development: Task 36
+- 37. [STAGE 3] Backend Development: Task 37
+- 38. [STAGE 3] Backend Development: Task 38
+- 39. [STAGE 3] Backend Development: Task 39
+- 40. [STAGE 3] Backend Development: Task 40
+- 41. [STAGE 3] Backend Development: Task 41
+- 42. [STAGE 3] Backend Development: Task 42
+- 43. [STAGE 3] Backend Development: Task 43
+- 44. [STAGE 3] Backend Development: Task 44
+- 45. [STAGE 3] Backend Development: Task 45
+- 46. [STAGE 3] Backend Development: Task 46
+- 47. [STAGE 3] Backend Development: Task 47
+- 48. [STAGE 3] Backend Development: Task 48
+- 49. [STAGE 3] Backend Development: Task 49
+- 50. [STAGE 3] Backend Development: Task 50
+- 51. [STAGE 3] Backend Development: Task 51
+- 52. [STAGE 3] Backend Development: Task 52
+- 53. [STAGE 3] Backend Development: Task 53
+- 54. [STAGE 3] Backend Development: Task 54
+- 55. [STAGE 3] Backend Development: Task 55
+- 56. [STAGE 3] Backend Development: Task 56
+- 57. [STAGE 3] Backend Development: Task 57
+- 58. [STAGE 3] Backend Development: Task 58
+- 59. [STAGE 3] Backend Development: Task 59
+- 60. [STAGE 3] Backend Development: Task 60
+- 61. [STAGE 4] Frontend Development: Task 61
+- 62. [STAGE 4] Frontend Development: Task 62
+- 63. [STAGE 4] Frontend Development: Task 63
+- 64. [STAGE 4] Frontend Development: Task 64
+- 65. [STAGE 4] Frontend Development: Task 65
+- 66. [STAGE 4] Frontend Development: Task 66
+- 67. [STAGE 4] Frontend Development: Task 67
+- 68. [STAGE 4] Frontend Development: Task 68
+- 69. [STAGE 4] Frontend Development: Task 69
+- 70. [STAGE 4] Frontend Development: Task 70
+- 71. [STAGE 4] Frontend Development: Task 71
+- 72. [STAGE 4] Frontend Development: Task 72
+- 73. [STAGE 4] Frontend Development: Task 73
+- 74. [STAGE 4] Frontend Development: Task 74
+- 75. [STAGE 4] Frontend Development: Task 75
+- 76. [STAGE 4] Frontend Development: Task 76
+- 77. [STAGE 4] Frontend Development: Task 77
+- 78. [STAGE 4] Frontend Development: Task 78
+- 79. [STAGE 4] Frontend Development: Task 79
+- 80. [STAGE 4] Frontend Development: Task 80
+- 81. [STAGE 4] Frontend Development: Task 81
+- 82. [STAGE 4] Frontend Development: Task 82
+- 83. [STAGE 4] Frontend Development: Task 83
+- 84. [STAGE 4] Frontend Development: Task 84
+- 85. [STAGE 4] Frontend Development: Task 85
+- 86. [STAGE 4] Frontend Development: Task 86
+- 87. [STAGE 4] Frontend Development: Task 87
+- 88. [STAGE 4] Frontend Development: Task 88
+- 89. [STAGE 4] Frontend Development: Task 89
+- 90. [STAGE 4] Frontend Development: Task 90
+- 91. [STAGE 5] Media Management: Task 91
+- 92. [STAGE 5] Media Management: Task 92
+- 93. [STAGE 5] Media Management: Task 93
+- 94. [STAGE 5] Media Management: Task 94
+- 95. [STAGE 5] Media Management: Task 95
+- 96. [STAGE 5] Media Management: Task 96
+- 97. [STAGE 5] Media Management: Task 97
+- 98. [STAGE 5] Media Management: Task 98
+- 99. [STAGE 5] Media Management: Task 99
+- 100. [STAGE 5] Media Management: Task 100
+- 101. [STAGE 5] Media Management: Task 101
+- 102. [STAGE 5] Media Management: Task 102
+- 103. [STAGE 5] Media Management: Task 103
+- 104. [STAGE 5] Media Management: Task 104
+- 105. [STAGE 5] Media Management: Task 105
+- 106. [STAGE 5] Media Management: Task 106
+- 107. [STAGE 5] Media Management: Task 107
+- 108. [STAGE 5] Media Management: Task 108
+- 109. [STAGE 5] Media Management: Task 109
+- 110. [STAGE 5] Media Management: Task 110
+- 111. [STAGE 6] Deployment & DevOps: Task 111
+- 112. [STAGE 6] Deployment & DevOps: Task 112
+- 113. [STAGE 6] Deployment & DevOps: Task 113
+- 114. [STAGE 6] Deployment & DevOps: Task 114
+- 115. [STAGE 6] Deployment & DevOps: Task 115
+- 116. [STAGE 6] Deployment & DevOps: Task 116
+- 117. [STAGE 6] Deployment & DevOps: Task 117
+- 118. [STAGE 6] Deployment & DevOps: Task 118
+- 119. [STAGE 6] Deployment & DevOps: Task 119
+- 120. [STAGE 6] Deployment & DevOps: Task 120
+- 121. [STAGE 6] Deployment & DevOps: Task 121
+- 122. [STAGE 6] Deployment & DevOps: Task 122
+- 123. [STAGE 6] Deployment & DevOps: Task 123
+- 124. [STAGE 6] Deployment & DevOps: Task 124
+- 125. [STAGE 6] Deployment & DevOps: Task 125
+- 126. [STAGE 6] Deployment & DevOps: Task 126
+- 127. [STAGE 6] Deployment & DevOps: Task 127
+- 128. [STAGE 6] Deployment & DevOps: Task 128
+- 129. [STAGE 6] Deployment & DevOps: Task 129
+- 130. [STAGE 6] Deployment & DevOps: Task 130
+- 131. [STAGE 7] Quality Assurance: Task 131
+- 132. [STAGE 7] Quality Assurance: Task 132
+- 133. [STAGE 7] Quality Assurance: Task 133
+- 134. [STAGE 7] Quality Assurance: Task 134
+- 135. [STAGE 7] Quality Assurance: Task 135
+- 136. [STAGE 7] Quality Assurance: Task 136
+- 137. [STAGE 7] Quality Assurance: Task 137
+- 138. [STAGE 7] Quality Assurance: Task 138
+- 139. [STAGE 7] Quality Assurance: Task 139
+- 140. [STAGE 7] Quality Assurance: Task 140
+- 141. [STAGE 7] Quality Assurance: Task 141
+- 142. [STAGE 7] Quality Assurance: Task 142
+- 143. [STAGE 7] Quality Assurance: Task 143
+- 144. [STAGE 7] Quality Assurance: Task 144
+- 145. [STAGE 7] Quality Assurance: Task 145
+- 146. [STAGE 8] Launch Readiness: Task 146
+- 147. [STAGE 8] Launch Readiness: Task 147
+- 148. [STAGE 8] Launch Readiness: Task 148
+- 149. [STAGE 8] Launch Readiness: Task 149
+- 150. [STAGE 8] Launch Readiness: Task 150

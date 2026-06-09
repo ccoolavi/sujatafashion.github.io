@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "Sujata Fashion Backend",
+    "version": "1.0.0",
+    "debug": true
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "reload": true
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "backend/data/sujata.db"
+  },
+  "auth": {
+    "secret_key": "CHANGE_ME_IN_PRODUCTION_$(openssl rand -hex 32)",
+    "algorithm": "HS256",
+    "access_token_expire_minutes": 60
+  },
+  "cors": {
+    "origins": ["*"],
+    "methods": ["GET", "POST", "PUT", "DELETE"],
+    "headers": ["*"]
+  },
+  "cloudinary": {
+    "cloud_name": "di9yqqagj",
+    "api_key": "PLACEHOLDER",
+    "api_secret": "PLACEHOLDER"
+  }
+}
