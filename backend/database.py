@@ -142,6 +142,21 @@ def init_db():
         )
     """)
 
+    # Wishlist / Favorites table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS wishlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT,
+            customer_email TEXT,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+            UNIQUE(product_id, customer_phone, customer_email)
+        )
+    """)
+
     # Newsletter subscriptions table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS subscriptions (

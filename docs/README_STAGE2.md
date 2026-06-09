@@ -92,11 +92,19 @@
 - **Features**: Validates product exists and is shop-type, quantity tracking, shipping address management, status tracking (pending/confirmed/shipped/delivered/cancelled), Pydantic validation.
 - **Database Table**: `orders` (id, product_id, customer_name, customer_phone, customer_email, quantity, total_amount, shipping_address, status, notes, created_at)
 - **Tests**: 16 test cases covering CRUD, status workflow, filtering, product type validation, and error handling.
-- **Status**: ✅ Implemented and tested (103/103 tests passing).
+| **Status**: ✅ Implemented and tested (103/103 tests passing).
+
+### 13. Wishlist / Favorites API (Task 24)
+- **Purpose**: CRUD API for customers to save favorite products for later reference.
+- **Endpoints**: `GET /api/wishlist` (list with pagination + X-Total-Count), `GET /api/wishlist/{id}` (single), `POST /api/wishlist` (add product), `PUT /api/wishlist/{id}` (update), `DELETE /api/wishlist/{id}` (remove), `GET /api/wishlist/find` (lookup by phone/email)
+- **Features**: Validates product exists before adding, duplicate detection via (product_id + phone + email), pagination with X-Total-Count header, find-by-customer endpoint for lookup.
+- **Database Table**: `wishlist` (id, product_id, customer_name, customer_phone, customer_email, notes, created_at)
+- **Tests**: 17 test cases covering CRUD, duplicate detection, product validation, pagination, and customer lookup.
+- **Status**: ✅ Implemented and tested (120/120 tests passing).
 
 ## Next Steps
 
-1. Continue Stage 2: Data & Integration tasks (20-30)
+1. Continue Stage 2: Data & Integration tasks (25-30)
 2. Begin Stage 3: Backend Development
 3. Implement advanced authentication flows.
 4. Complete full API coverage for product management.

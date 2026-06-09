@@ -18,6 +18,7 @@ from .auth import (
     SubscribeRequest, SubscriberUpdate, SubscriberResponse,
     BookingCreate, BookingUpdate, BookingResponse,
     OrderCreate, OrderUpdate, OrderResponse,
+    WishlistCreate, WishlistUpdate, WishlistResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -1126,6 +1127,175 @@ async def delete_booking(booking_id: int):
         conn.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
         conn.commit()
         return {"status": "ok", "deleted_id": booking_id}
+    finally:
+        conn.close()
+
+
+# --- Wishlist / Favorites API Endpoints ---
+
+
+@app.get("/api/wishlist", response_model=list[WishlistResponse])
+async def list_wishlist(limit: int = 100, offset: int = 0):
+    """List all wishlist items with pagination."""
+    conn = get_connection()
+    try:
+        count_row = conn.execute("SELECT COUNT(*) as cnt FROM wishlist").fetchone()
+        total = count_row["cnt"] if count_row else 0
+
+        rows = conn.execute(
+            "SELECT * FROM wishlist ORDER BY created_at DESC LIMIT ? OFFSET ?",
+            [min(limit, 100), offset]
+        ).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(WishlistResponse(**d))
+
+        from starlette.responses import Response
+        import json as _json
+        body = _json.dumps([r.model_dump() for r in results], default=str)
+        return Response(
+            content=body,
+            media_type="application/json",
+            headers={"X-Total-Count": str(total)}
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/api/wishlist/find", response_model=list[WishlistResponse])
+async def find_wishlist_items(customer_phone: str = None, customer_email: str = None):
+    """Find wishlist items by customer phone or email."""
+    conn = get_connection()
+    try:
+        query = "SELECT * FROM wishlist WHERE 1=1"
+        params = []
+        if customer_phone:
+            query += " AND customer_phone = ?"
+            params.append(customer_phone)
+        if customer_email:
+            query += " AND customer_email = ?"
+            params.append(customer_email)
+        query += " ORDER BY created_at DESC"
+
+        rows = conn.execute(query, params).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(WishlistResponse(**d))
+        return results
+    finally:
+        conn.close()
+
+
+@app.get("/api/wishlist/{wishlist_id}", response_model=WishlistResponse)
+async def get_wishlist_item(wishlist_id: int):
+    """Get a single wishlist item by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM wishlist WHERE id = ?", (wishlist_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Wishlist item not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return WishlistResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.post("/api/wishlist", status_code=201, response_model=WishlistResponse)
+async def create_wishlist_item(item: WishlistCreate):
+    """Add a product to the wishlist."""
+    conn = get_connection()
+    try:
+        # Verify product exists
+        product = conn.execute(
+            "SELECT id FROM products WHERE id = ?", (item.product_id,)
+        ).fetchone()
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        # Check for duplicate
+        dup = conn.execute(
+            "SELECT id FROM wishlist WHERE product_id = ? AND customer_phone = ? AND customer_email = ?",
+            (item.product_id, item.customer_phone, item.customer_email)
+        ).fetchone()
+        if dup:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="This product is already in your wishlist",
+            )
+
+        cursor = conn.execute(
+            """INSERT INTO wishlist (product_id, customer_name, customer_phone, customer_email, notes)
+               VALUES (?, ?, ?, ?, ?)""",
+            (item.product_id, item.customer_name, item.customer_phone, item.customer_email, item.notes),
+        )
+        conn.commit()
+        row = conn.execute(
+            "SELECT * FROM wishlist WHERE id = ?", (cursor.lastrowid,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return WishlistResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/wishlist/{wishlist_id}", response_model=WishlistResponse)
+async def update_wishlist_item(wishlist_id: int, item: WishlistUpdate):
+    """Update a wishlist item."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM wishlist WHERE id = ?", (wishlist_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Wishlist item not found")
+
+        fields = {}
+        if item.customer_name is not None:
+            fields["customer_name"] = item.customer_name
+        if item.customer_phone is not None:
+            fields["customer_phone"] = item.customer_phone
+        if item.customer_email is not None:
+            fields["customer_email"] = item.customer_email
+        if item.notes is not None:
+            fields["notes"] = item.notes
+
+        if fields:
+            set_clause = ", ".join(f"{k} = ?" for k in fields)
+            values = list(fields.values()) + [wishlist_id]
+            conn.execute(f"UPDATE wishlist SET {set_clause} WHERE id = ?", values)
+            conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM wishlist WHERE id = ?", (wishlist_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return WishlistResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/wishlist/{wishlist_id}")
+async def delete_wishlist_item(wishlist_id: int):
+    """Remove an item from the wishlist."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM wishlist WHERE id = ?", (wishlist_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Wishlist item not found")
+        conn.execute("DELETE FROM wishlist WHERE id = ?", (wishlist_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": wishlist_id}
     finally:
         conn.close()
 

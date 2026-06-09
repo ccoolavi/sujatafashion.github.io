@@ -162,6 +162,33 @@ class OrderResponse(BaseModel):
     notes: str | None = None
     created_at: str
 
+# --- Wishlist / Favorites Models ---
+
+class WishlistCreate(BaseModel):
+    """Request model for adding an item to wishlist."""
+    product_id: int = Field(..., description="ID of the product to add")
+    customer_name: str = Field(..., min_length=2, max_length=200, description="Customer name")
+    customer_phone: str | None = Field(None, min_length=7, max_length=20, description="Customer phone")
+    customer_email: str | None = Field(None, description="Customer email")
+    notes: str | None = Field(None, max_length=500, description="Optional note about this wishlist item")
+
+class WishlistUpdate(BaseModel):
+    """Request model for updating a wishlist item."""
+    customer_name: str | None = Field(None, min_length=2, max_length=200)
+    customer_phone: str | None = Field(None, min_length=7, max_length=20)
+    customer_email: str | None = None
+    notes: str | None = Field(None, max_length=500)
+
+class WishlistResponse(BaseModel):
+    """Response model for a wishlist item."""
+    id: int
+    product_id: int
+    customer_name: str
+    customer_phone: str | None = None
+    customer_email: str | None = None
+    notes: str | None = None
+    created_at: str
+
 # --- Rental Booking Models ---
 
 class BookingCreate(BaseModel):
