@@ -20,6 +20,7 @@ from .auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
 from .utils.cloudinary_service import configure_cloudinary
+from .seeder import seed_all, clear_seed_data
 
 app = FastAPI(
     title=settings.app_name,
@@ -456,6 +457,49 @@ async def setup_admin():
             "message": "Default admin created. Username: admin, Password: admin123",
             "warning": "CHANGE THIS PASSWORD IMMEDIATELY"
         }
+    finally:
+        conn.close()
+
+
+# --- Database Seed/Data Management Endpoints ---
+
+
+@app.post("/api/seed")
+async def seed_database():
+    """Seed the database with sample products and testimonials.
+
+    Useful for development, testing, and demo environments.
+    Idempotent — call multiple times (will append duplicates intentionally).
+    """
+    conn = get_connection()
+    try:
+        result = seed_all(conn)
+        return {
+            "status": "success",
+            "message": f"Seeded {result['products_seeded']} products and {result['testimonials_seeded']} testimonials",
+            **result,
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Seeding failed: {str(e)}",
+        )
+    finally:
+        conn.close()
+
+
+@app.delete("/api/seed")
+async def clear_database_data():
+    """Remove all seed data from products and testimonials tables."""
+    conn = get_connection()
+    try:
+        clear_seed_data(conn)
+        return {"status": "success", "message": "Seed data cleared"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Clear failed: {str(e)}",
+        )
     finally:
         conn.close()
 

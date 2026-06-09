@@ -45,6 +45,14 @@
 - **Tests**: 2 test cases covering successful upload (mocked) and non-image rejection.
 - **Status**: ✅ Implemented and tested (34/34 tests passing).
 
+### 7. Database Seeding & Data Management API (Task 18)
+- **Purpose**: Seed and manage sample data in the SQLite database for development and testing.
+- **Endpoints**: `POST /api/seed` (add sample products + testimonials), `DELETE /api/seed` (clear all seeded data)
+- **Features**: Seeds 12 products (8 shop + 4 rent) and 5 testimonials with realistic fashion data including Cloudinary image URLs. Idempotent seeding — call multiple times.
+- **Module**: `backend/seeder.py` with configurable product and testimonial data arrays.
+- **Tests**: 8 test cases covering seeding, clearing, re-seeding, and data verification via product/testimonial APIs.
+- **Status**: ✅ Implemented and tested (42/42 tests passing).
+
 ## Next Steps
 
 1. Begin Stage 3: Backend Development
