@@ -10,6 +10,7 @@ from .config import settings
 from .database import get_connection, init_db
 from .auth import (
     UserCreate, UserLogin, UserResponse, Token,
+    InquiryCreate, InquiryResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -149,7 +150,7 @@ async def health_check():
     return {"status": "ok", "message": "Sujata Fashion API is running"}
 
 
-@app.get("/api/inquiries")
+@app.get("/api/inquiries", response_model=list[InquiryResponse])
 async def get_inquiries():
     """Get all inquiries (public for now, restrict later)."""
     conn = get_connection()
@@ -157,24 +158,25 @@ async def get_inquiries():
         rows = conn.execute(
             "SELECT * FROM inquiries ORDER BY created_at DESC LIMIT 50"
         ).fetchall()
-        return [dict(row) for row in rows]
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(InquiryResponse(**d))
+        return results
     finally:
         conn.close()
 
 
-@app.post("/api/inquiries")
-async def create_inquiry(
-    name: str, phone: str, email: str,
-    course: str = None, message: str = None,
-    preferred_date: str = None
-):
-    """Submit a new course inquiry."""
+@app.post("/api/inquiries", status_code=201)
+async def create_inquiry(inquiry: InquiryCreate):
+    """Submit a new course inquiry with validated data."""
     conn = get_connection()
     try:
         cursor = conn.execute(
             """INSERT INTO inquiries (name, phone, email, course, preferred_date, message)
                VALUES (?, ?, ?, ?, ?, ?)""",
-            (name, phone, email, course, preferred_date, message)
+            (inquiry.name, inquiry.phone, inquiry.email, inquiry.course, inquiry.preferred_date, inquiry.message)
         )
         conn.commit()
         return {"status": "ok", "id": cursor.lastrowid}
