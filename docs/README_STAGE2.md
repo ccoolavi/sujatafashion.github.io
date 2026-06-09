@@ -18,7 +18,15 @@
 - **Endpoints**: `GET /api/products`, `GET /api/products/{id}`, `POST /api/products`, `PUT /api/products/{id}`, `DELETE /api/products/{id}`
 - **Features**: Filter by category, type (shop/rent), active status. Supports partial updates.
 - **Tests**: 11 test cases covering CRUD, filtering, and edge cases.
-- **Status**: ✅ Implemented and tested (20/20 tests passing).
+- **Status**: ✅ Implemented and tested (21/21 tests passing).
+
+### 4. Inquiry Submission API (Task 15)
+- **Purpose**: Validated course inquiry submission endpoint with structured data handling.
+- **Endpoints**: `POST /api/inquiries` (JSON body), `GET /api/inquiries`
+- **Features**: Pydantic-based request validation (email format, required fields, length constraints), proper HTTP status codes (201 for creation, 422 for validation errors).
+- **Models**: `InquiryCreate` (request), `InquiryResponse` (response) in `backend/auth.py`
+- **Tests**: 1 new test for validation rejection (invalid email, missing fields, short name).
+- **Status**: ✅ Implemented and tested.
 
 ## Next Steps
 
