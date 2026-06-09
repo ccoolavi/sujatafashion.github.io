@@ -124,6 +124,47 @@ class SubscriberResponse(BaseModel):
     source: str = "website"
     created_at: str
 
+# --- Rental Booking Models ---
+
+class BookingCreate(BaseModel):
+    """Request model for creating a rental booking."""
+    product_id: int = Field(..., description="ID of the product to rent")
+    customer_name: str = Field(..., min_length=2, max_length=200, description="Customer name")
+    customer_phone: str = Field(..., min_length=7, max_length=20, description="Customer phone number")
+    customer_email: str | None = Field(None, description="Customer email address")
+    start_date: str = Field(..., max_length=20, description="Rental start date (YYYY-MM-DD)")
+    end_date: str = Field(..., max_length=20, description="Rental end date (YYYY-MM-DD)")
+    total_amount: float | None = Field(None, ge=0, description="Total rental amount")
+    deposit_amount: float | None = Field(0, ge=0, description="Security deposit amount")
+    notes: str | None = Field(None, max_length=2000, description="Booking notes")
+
+class BookingUpdate(BaseModel):
+    """Request model for updating a booking."""
+    customer_name: str | None = Field(None, min_length=2, max_length=200)
+    customer_phone: str | None = Field(None, min_length=7, max_length=20)
+    customer_email: str | None = None
+    start_date: str | None = Field(None, max_length=20)
+    end_date: str | None = Field(None, max_length=20)
+    total_amount: float | None = Field(None, ge=0)
+    deposit_amount: float | None = Field(None, ge=0)
+    status: str | None = Field(None, max_length=50, description="Booking status")
+    notes: str | None = Field(None, max_length=2000)
+
+class BookingResponse(BaseModel):
+    """Response model for a rental booking."""
+    id: int
+    product_id: int
+    customer_name: str
+    customer_phone: str
+    customer_email: str | None = None
+    start_date: str
+    end_date: str
+    total_amount: float | None = None
+    deposit_amount: float = 0
+    status: str = "pending"
+    notes: str | None = None
+    created_at: str
+
 # --- Password Utilities ---
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

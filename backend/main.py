@@ -16,6 +16,7 @@ from .auth import (
     TestimonialCreate, TestimonialResponse,
     UploadResponse,
     SubscribeRequest, SubscriberUpdate, SubscriberResponse,
+    BookingCreate, BookingUpdate, BookingResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -806,6 +807,169 @@ async def upload_image(file: UploadFile = File(...)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Image upload failed: {str(e)}",
         )
+
+
+# --- Rental Booking API Endpoints ---
+
+
+@app.get("/api/bookings", response_model=list[BookingResponse])
+async def list_bookings(status: str = None, limit: int = 100, offset: int = 0):
+    """List rental bookings with optional status filter and pagination."""
+    conn = get_connection()
+    try:
+        query = "FROM bookings"
+        params = []
+        if status:
+            query += " WHERE status = ?"
+            params.append(status)
+
+        # Get total count
+        count_row = conn.execute(f"SELECT COUNT(*) as cnt {query}", params).fetchone()
+        total = count_row["cnt"] if count_row else 0
+
+        full_query = f"SELECT * {query} ORDER BY created_at DESC LIMIT ? OFFSET ?"
+        rows = conn.execute(full_query, params + [min(limit, 100), offset]).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            d["deposit_amount"] = d.get("deposit_amount") or 0
+            results.append(BookingResponse(**d))
+
+        from starlette.responses import Response
+        import json as _json
+        body = _json.dumps([r.model_dump() for r in results], default=str)
+        return Response(
+            content=body,
+            media_type="application/json",
+            headers={"X-Total-Count": str(total)}
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/api/bookings/{booking_id}", response_model=BookingResponse)
+async def get_booking(booking_id: int):
+    """Get a single rental booking by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM bookings WHERE id = ?", (booking_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        d["deposit_amount"] = d.get("deposit_amount") or 0
+        return BookingResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.post("/api/bookings", status_code=201, response_model=BookingResponse)
+async def create_booking(booking: BookingCreate):
+    """Create a new rental booking."""
+    conn = get_connection()
+    try:
+        # Verify product exists
+        product = conn.execute(
+            "SELECT id, type FROM products WHERE id = ?", (booking.product_id,)
+        ).fetchone()
+        if not product:
+            raise HTTPException(status_code=404, detail="Product not found")
+        if product["type"] != "rent":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Booking is only available for rental products",
+            )
+
+        cursor = conn.execute(
+            """INSERT INTO bookings
+               (product_id, customer_name, customer_phone, customer_email,
+                start_date, end_date, total_amount, deposit_amount, notes)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                booking.product_id, booking.customer_name, booking.customer_phone,
+                booking.customer_email, booking.start_date, booking.end_date,
+                booking.total_amount, booking.deposit_amount, booking.notes,
+            ),
+        )
+        conn.commit()
+        booking_id = cursor.lastrowid
+        row = conn.execute(
+            "SELECT * FROM bookings WHERE id = ?", (booking_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        d["deposit_amount"] = d.get("deposit_amount") or 0
+        return BookingResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/bookings/{booking_id}", response_model=BookingResponse)
+async def update_booking(booking_id: int, booking: BookingUpdate):
+    """Update an existing rental booking."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM bookings WHERE id = ?", (booking_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Booking not found")
+
+        fields = {}
+        if booking.customer_name is not None:
+            fields["customer_name"] = booking.customer_name
+        if booking.customer_phone is not None:
+            fields["customer_phone"] = booking.customer_phone
+        if booking.customer_email is not None:
+            fields["customer_email"] = booking.customer_email
+        if booking.start_date is not None:
+            fields["start_date"] = booking.start_date
+        if booking.end_date is not None:
+            fields["end_date"] = booking.end_date
+        if booking.total_amount is not None:
+            fields["total_amount"] = booking.total_amount
+        if booking.deposit_amount is not None:
+            fields["deposit_amount"] = booking.deposit_amount
+        if booking.status is not None:
+            fields["status"] = booking.status
+        if booking.notes is not None:
+            fields["notes"] = booking.notes
+
+        if fields:
+            set_clause = ", ".join(f"{k} = ?" for k in fields)
+            values = list(fields.values()) + [booking_id]
+            conn.execute(f"UPDATE bookings SET {set_clause} WHERE id = ?", values)
+            conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM bookings WHERE id = ?", (booking_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        d["deposit_amount"] = d.get("deposit_amount") or 0
+        return BookingResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/bookings/{booking_id}")
+async def delete_booking(booking_id: int):
+    """Delete a rental booking by ID."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM bookings WHERE id = ?", (booking_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        conn.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": booking_id}
+    finally:
+        conn.close()
 
 
 # Serve static frontend files (for production deployment)

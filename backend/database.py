@@ -105,6 +105,25 @@ def init_db():
         )
     """)
 
+    # Rental bookings table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bookings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT NOT NULL,
+            customer_email TEXT,
+            start_date TEXT NOT NULL,
+            end_date TEXT NOT NULL,
+            total_amount REAL,
+            deposit_amount REAL DEFAULT 0,
+            status TEXT DEFAULT 'pending',
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        )
+    """)
+
     # Newsletter subscriptions table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS subscriptions (

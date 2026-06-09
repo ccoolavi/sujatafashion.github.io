@@ -78,6 +78,14 @@
 - **Tests**: 15 test cases covering subscription, listing, active filter, single retrieval, update, deactivation, delete, and validation.
 - **Status**: ✅ Implemented and tested (71/71 tests passing).
 
+### 11. Rental Booking Management API (Task 22)
+- **Purpose**: CRUD API for managing rental product bookings with customer info, date ranges, deposit tracking, and status workflow.
+- **Endpoints**: `GET /api/bookings` (list with status filter + pagination), `GET /api/bookings/{id}`, `POST /api/bookings`, `PUT /api/bookings/{id}`, `DELETE /api/bookings/{id}`
+- **Features**: Validates product exists and is rent-type, status tracking (pending/confirmed/cancelled/completed), deposit tracking, `X-Total-Count` header with pagination, Pydantic validation for names, phone, dates, and amounts.
+- **Database Table**: `bookings` (id, product_id, customer_name, customer_phone, customer_email, start_date, end_date, total_amount, deposit_amount, status, notes, created_at)
+- **Tests**: 16 test cases covering CRUD, status workflow, filtering, product validation, and error handling.
+- **Status**: ✅ Implemented and tested (87/87 tests passing).
+
 ## Next Steps
 
 1. Continue Stage 2: Data & Integration tasks (20-30)
