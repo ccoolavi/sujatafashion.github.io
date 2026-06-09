@@ -53,5 +53,6 @@ def clear_tables(client):
         cursor.execute("DELETE FROM inquiries")
         cursor.execute("DELETE FROM products")
         cursor.execute("DELETE FROM testimonials")
+        cursor.execute("DELETE FROM subscriptions")
         conn.commit()
         conn.close()

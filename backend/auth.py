@@ -50,6 +50,17 @@ class InquiryCreate(BaseModel):
     message: str | None = Field(None, max_length=2000, description="Additional message")
     preferred_date: str | None = Field(None, max_length=50, description="Preferred session date")
 
+class InquiryUpdate(BaseModel):
+    """Request model for updating an inquiry."""
+    status: str | None = Field(None, max_length=50, description="Inquiry status")
+    notes: str | None = Field(None, max_length=2000, description="Admin notes")
+    name: str | None = Field(None, min_length=2, max_length=100)
+    phone: str | None = Field(None, min_length=7, max_length=20)
+    email: str | None = Field(None)
+    course: str | None = Field(None, max_length=200)
+    message: str | None = Field(None, max_length=2000)
+    preferred_date: str | None = Field(None, max_length=50)
+
 class InquiryResponse(BaseModel):
     """Response model for an inquiry."""
     id: int
@@ -60,6 +71,8 @@ class InquiryResponse(BaseModel):
     message: str | None = None
     preferred_date: str | None = None
     source: str = "website"
+    status: str = "new"
+    notes: str | None = None
     created_at: str
 
 class TestimonialCreate(BaseModel):
@@ -88,6 +101,28 @@ class UploadResponse(BaseModel):
     format: str | None = None
     width: int | None = None
     height: int | None = None
+
+# --- Newsletter Subscription Models ---
+
+class SubscribeRequest(BaseModel):
+    """Request model for newsletter subscription."""
+    email: EmailStr = Field(..., description="Email address to subscribe")
+    name: str | None = Field(None, max_length=100, description="Subscriber name")
+
+class SubscriberUpdate(BaseModel):
+    """Request model for updating a subscriber."""
+    is_active: bool | None = None
+    name: str | None = Field(None, max_length=100)
+    email: EmailStr | None = None
+
+class SubscriberResponse(BaseModel):
+    """Response model for a subscriber."""
+    id: int
+    email: str
+    name: str | None = None
+    is_active: int = 1
+    source: str = "website"
+    created_at: str
 
 # --- Password Utilities ---
 

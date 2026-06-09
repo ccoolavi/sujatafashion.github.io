@@ -61,6 +61,23 @@
 - **Tests**: 7 new test cases covering pagination, search, empty search results, total count header, and limit enforcement.
 - **Status**: ✅ Implemented and tested (49/49 tests passing).
 
+### 9. Inquiry Management CRUD (Task 20)
+- **Purpose**: Full CRUD management endpoints for course inquiries with status tracking and admin notes.
+- **Endpoints**: `GET /api/inquiries/{id}` (single inquiry), `PUT /api/inquiries/{id}` (update status/notes/fields), `DELETE /api/inquiries/{id}` (remove inquiry)
+- **Features**: Status tracking (`new`/`contacted`/etc.), admin notes field, partial updates, proper 404 handling.
+- **Models**: `InquiryUpdate` in `backend/auth.py` with optional fields for status, notes, name, phone, email, course, message, preferred_date.
+- **Database**: Added `status TEXT DEFAULT 'new'` and `notes TEXT` columns to `inquiries` table with migration support.
+- **Tests**: 7 new test cases covering single retrieval, status update, partial update, delete, and 404 handling.
+- **Status**: ✅ Implemented and tested (56/56 tests passing).
+
+### 10. Newsletter Subscription API (Task 21)
+- **Purpose**: REST API for newsletter email subscription management with CRUD operations.
+- **Endpoints**: `POST /api/subscribe` (subscribe email + optional name), `GET /api/subscribers` (list all/active), `GET /api/subscribers/{id}` (single), `PUT /api/subscribers/{id}` (update name/status/email), `DELETE /api/subscribers/{id}` (remove subscriber)
+- **Features**: Duplicate email detection with auto-reactivation, email validation via Pydantic's EmailStr, active-only filtering, proper 404 handling.
+- **Database Table**: `subscriptions` (id, email, name, is_active, source, created_at)
+- **Tests**: 15 test cases covering subscription, listing, active filter, single retrieval, update, deactivation, delete, and validation.
+- **Status**: ✅ Implemented and tested (71/71 tests passing).
+
 ## Next Steps
 
 1. Continue Stage 2: Data & Integration tasks (20-30)

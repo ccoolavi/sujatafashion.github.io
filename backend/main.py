@@ -12,9 +12,10 @@ from .config import settings
 from .database import get_connection, init_db
 from .auth import (
     UserCreate, UserLogin, UserResponse, Token,
-    InquiryCreate, InquiryResponse,
+    InquiryCreate, InquiryUpdate, InquiryResponse,
     TestimonialCreate, TestimonialResponse,
     UploadResponse,
+    SubscribeRequest, SubscriberUpdate, SubscriberResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
@@ -168,6 +169,8 @@ async def get_inquiries():
         for row in rows:
             d = dict(row)
             d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            d["status"] = d.get("status", "new")
+            d["notes"] = d.get("notes")
             results.append(InquiryResponse(**d))
         return results
     finally:
@@ -186,6 +189,97 @@ async def create_inquiry(inquiry: InquiryCreate):
         )
         conn.commit()
         return {"status": "ok", "id": cursor.lastrowid}
+    finally:
+        conn.close()
+
+
+@app.get("/api/inquiries/{inquiry_id}", response_model=InquiryResponse)
+async def get_inquiry(inquiry_id: int):
+    """Get a single inquiry by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM inquiries WHERE id = ?", (inquiry_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Inquiry not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        d["status"] = d.get("status", "new")
+        d["notes"] = d.get("notes")
+        return InquiryResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/inquiries/{inquiry_id}", response_model=InquiryResponse)
+async def update_inquiry(inquiry_id: int, inquiry: InquiryUpdate):
+    """Update an existing inquiry (status, notes, or contact fields)."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM inquiries WHERE id = ?", (inquiry_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Inquiry not found")
+
+        fields = {}
+        if inquiry.status is not None:
+            fields["status"] = inquiry.status
+        if inquiry.notes is not None:
+            fields["notes"] = inquiry.notes
+        if inquiry.name is not None:
+            fields["name"] = inquiry.name
+        if inquiry.phone is not None:
+            fields["phone"] = inquiry.phone
+        if inquiry.email is not None:
+            fields["email"] = inquiry.email
+        if inquiry.course is not None:
+            fields["course"] = inquiry.course
+        if inquiry.message is not None:
+            fields["message"] = inquiry.message
+        if inquiry.preferred_date is not None:
+            fields["preferred_date"] = inquiry.preferred_date
+
+        if not fields:
+            d = dict(existing)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            d["status"] = d.get("status", "new")
+            d["notes"] = d.get("notes")
+            return InquiryResponse(**d)
+
+        set_clause = ", ".join(f"{k} = ?" for k in fields)
+        values = list(fields.values()) + [inquiry_id]
+        conn.execute(
+            f"UPDATE inquiries SET {set_clause} WHERE id = ?", values
+        )
+        conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM inquiries WHERE id = ?", (inquiry_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        d["status"] = d.get("status", "new")
+        d["notes"] = d.get("notes")
+        return InquiryResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/inquiries/{inquiry_id}")
+async def delete_inquiry(inquiry_id: int):
+    """Delete an inquiry by ID."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM inquiries WHERE id = ?", (inquiry_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Inquiry not found")
+        conn.execute("DELETE FROM inquiries WHERE id = ?", (inquiry_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": inquiry_id}
     finally:
         conn.close()
 
@@ -537,6 +631,140 @@ async def clear_database_data():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Clear failed: {str(e)}",
         )
+    finally:
+        conn.close()
+
+
+# --- Newsletter Subscription Endpoints ---
+
+
+@app.post("/api/subscribe", status_code=201, response_model=SubscriberResponse)
+async def subscribe(subscription: SubscribeRequest):
+    """Subscribe an email to the newsletter."""
+    conn = get_connection()
+    try:
+        # Check if already subscribed
+        existing = conn.execute(
+            "SELECT * FROM subscriptions WHERE email = ?",
+            (subscription.email,)
+        ).fetchone()
+        if existing:
+            # Re-activate if previously unsubscribed
+            conn.execute(
+                "UPDATE subscriptions SET is_active = 1, name = COALESCE(?, name) WHERE id = ?",
+                (subscription.name, existing["id"])
+            )
+            conn.commit()
+            row = conn.execute(
+                "SELECT * FROM subscriptions WHERE id = ?", (existing["id"],)
+            ).fetchone()
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            return SubscriberResponse(**d)
+
+        cursor = conn.execute(
+            "INSERT INTO subscriptions (email, name) VALUES (?, ?)",
+            (subscription.email, subscription.name)
+        )
+        conn.commit()
+        row = conn.execute(
+            "SELECT * FROM subscriptions WHERE id = ?", (cursor.lastrowid,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return SubscriberResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.get("/api/subscribers", response_model=list[SubscriberResponse])
+async def list_subscribers(active_only: bool = False, limit: int = 100, offset: int = 0):
+    """List newsletter subscribers with optional filters."""
+    conn = get_connection()
+    try:
+        query = "FROM subscriptions"
+        params = []
+        if active_only:
+            query += " WHERE is_active = 1"
+        rows = conn.execute(
+            f"SELECT * {query} ORDER BY created_at DESC LIMIT ? OFFSET ?",
+            params + [min(limit, 100), offset]
+        ).fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+            results.append(SubscriberResponse(**d))
+        return results
+    finally:
+        conn.close()
+
+
+@app.get("/api/subscribers/{subscriber_id}", response_model=SubscriberResponse)
+async def get_subscriber(subscriber_id: int):
+    """Get a single subscriber by ID."""
+    conn = get_connection()
+    try:
+        row = conn.execute(
+            "SELECT * FROM subscriptions WHERE id = ?", (subscriber_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Subscriber not found")
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return SubscriberResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.put("/api/subscribers/{subscriber_id}", response_model=SubscriberResponse)
+async def update_subscriber(subscriber_id: int, update: SubscriberUpdate):
+    """Update a subscriber's details or status."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM subscriptions WHERE id = ?", (subscriber_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Subscriber not found")
+
+        fields = {}
+        if update.is_active is not None:
+            fields["is_active"] = 1 if update.is_active else 0
+        if update.name is not None:
+            fields["name"] = update.name
+        if update.email is not None:
+            fields["email"] = update.email
+
+        if fields:
+            set_clause = ", ".join(f"{k} = ?" for k in fields)
+            values = list(fields.values()) + [subscriber_id]
+            conn.execute(f"UPDATE subscriptions SET {set_clause} WHERE id = ?", values)
+            conn.commit()
+
+        row = conn.execute(
+            "SELECT * FROM subscriptions WHERE id = ?", (subscriber_id,)
+        ).fetchone()
+        d = dict(row)
+        d["created_at"] = str(d["created_at"]) if d.get("created_at") else ""
+        return SubscriberResponse(**d)
+    finally:
+        conn.close()
+
+
+@app.delete("/api/subscribers/{subscriber_id}")
+async def delete_subscriber(subscriber_id: int):
+    """Unsubscribe / remove a subscriber by ID."""
+    conn = get_connection()
+    try:
+        existing = conn.execute(
+            "SELECT * FROM subscriptions WHERE id = ?", (subscriber_id,)
+        ).fetchone()
+        if not existing:
+            raise HTTPException(status_code=404, detail="Subscriber not found")
+        conn.execute("DELETE FROM subscriptions WHERE id = ?", (subscriber_id,))
+        conn.commit()
+        return {"status": "ok", "deleted_id": subscriber_id}
     finally:
         conn.close()
 

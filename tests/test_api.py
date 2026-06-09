@@ -141,3 +141,106 @@ def test_upload_image_rejects_non_image(client):
     )
     assert response.status_code == 400
     assert "Only image files" in response.json()["detail"]
+
+
+# --- Inquiry Management Tests (Task 20) ---
+
+
+def test_get_single_inquiry(client):
+    """Should retrieve a single inquiry by ID."""
+    # Create an inquiry first
+    inquiry_data = {
+        "name": "Test User",
+        "phone": "9876543210",
+        "email": "test@example.com",
+        "course": "Fashion Design",
+        "message": "Interested in the course.",
+    }
+    create_resp = client.post("/api/inquiries", json=inquiry_data)
+    inquiry_id = create_resp.json()["id"]
+
+    # Retrieve it
+    response = client.get(f"/api/inquiries/{inquiry_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == "Test User"
+    assert data["email"] == "test@example.com"
+    assert data["status"] == "new"
+
+
+def test_get_inquiry_not_found(client):
+    """Should return 404 for non-existent inquiry."""
+    response = client.get("/api/inquiries/99999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Inquiry not found"
+
+
+def test_update_inquiry_status(client):
+    """Should update inquiry status and notes."""
+    create_resp = client.post("/api/inquiries", json={
+        "name": "Status Test",
+        "phone": "1111111111",
+        "email": "status@example.com",
+        "course": "Makeup Artistry",
+    })
+    inquiry_id = create_resp.json()["id"]
+
+    response = client.put(f"/api/inquiries/{inquiry_id}", json={
+        "status": "contacted",
+        "notes": "Called customer, interested in weekend batch",
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "contacted"
+    assert data["notes"] == "Called customer, interested in weekend batch"
+
+
+def test_update_inquiry_partial(client):
+    """Should allow partial update of inquiry fields."""
+    create_resp = client.post("/api/inquiries", json={
+        "name": "Partial Test",
+        "phone": "2222222222",
+        "email": "partial@example.com",
+        "course": "Original Course",
+    })
+    inquiry_id = create_resp.json()["id"]
+
+    # Update only the course
+    response = client.put(f"/api/inquiries/{inquiry_id}", json={
+        "course": "Updated Course",
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["course"] == "Updated Course"
+    assert data["name"] == "Partial Test"  # Unchanged
+
+
+def test_update_inquiry_not_found(client):
+    """Should return 404 when updating non-existent inquiry."""
+    response = client.put("/api/inquiries/99999", json={"status": "contacted"})
+    assert response.status_code == 404
+
+
+def test_delete_inquiry(client):
+    """Should delete an inquiry by ID."""
+    create_resp = client.post("/api/inquiries", json={
+        "name": "Delete Test",
+        "phone": "3333333333",
+        "email": "delete@example.com",
+    })
+    inquiry_id = create_resp.json()["id"]
+
+    # Delete it
+    response = client.delete(f"/api/inquiries/{inquiry_id}")
+    assert response.status_code == 200
+    assert response.json()["deleted_id"] == inquiry_id
+
+    # Verify it's gone
+    get_resp = client.get(f"/api/inquiries/{inquiry_id}")
+    assert get_resp.status_code == 404
+
+
+def test_delete_inquiry_not_found(client):
+    """Should return 404 when deleting non-existent inquiry."""
+    response = client.delete("/api/inquiries/99999")
+    assert response.status_code == 404

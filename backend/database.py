@@ -60,9 +60,21 @@ def init_db():
             preferred_date TEXT,
             message TEXT,
             source TEXT DEFAULT 'website',
+            status TEXT DEFAULT 'new',
+            notes TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+
+    # Add status and notes columns if they don't exist (migration for existing DBs)
+    try:
+        cursor.execute("ALTER TABLE inquiries ADD COLUMN status TEXT DEFAULT 'new'")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    try:
+        cursor.execute("ALTER TABLE inquiries ADD COLUMN notes TEXT")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
 
     # Products table (for future dynamic product management)
     cursor.execute("""
@@ -89,6 +101,18 @@ def init_db():
             video_url TEXT,
             rating INTEGER DEFAULT 5,
             is_active INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Newsletter subscriptions table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS subscriptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            name TEXT,
+            is_active INTEGER DEFAULT 1,
+            source TEXT DEFAULT 'website',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
