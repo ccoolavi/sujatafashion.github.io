@@ -37,6 +37,14 @@
 - **Tests**: 11 test cases covering CRUD, validation, filtering, and edge cases.
 - **Status**: ✅ Implemented and tested (32/32 tests passing).
 
+### 6. Cloudinary Upload API (Task 17)
+- **Purpose**: REST API endpoint for uploading images to Cloudinary for products, testimonials, and other media.
+- **Endpoints**: `POST /api/upload` (multipart file upload, returns Cloudinary URL + metadata)
+- **Features**: Accepts JPEG/PNG/WebP/GIF images, validates content type, returns secure URL and public_id.
+- **Models**: `UploadResponse` (url, public_id, format, width, height) in `backend/auth.py`
+- **Tests**: 2 test cases covering successful upload (mocked) and non-image rejection.
+- **Status**: ✅ Implemented and tested (34/34 tests passing).
+
 ## Next Steps
 
 1. Begin Stage 3: Backend Development

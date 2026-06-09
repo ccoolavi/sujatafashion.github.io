@@ -81,6 +81,14 @@ class TestimonialResponse(BaseModel):
     is_active: int = 1
     created_at: str
 
+class UploadResponse(BaseModel):
+    """Response model for a Cloudinary image upload."""
+    url: str
+    public_id: str
+    format: str | None = None
+    width: int | None = None
+    height: int | None = None
+
 # --- Password Utilities ---
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:

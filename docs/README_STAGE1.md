@@ -31,11 +31,11 @@
 ## Links and Resources
 
 ### Google Sheet
-- **SFA-Phase6 Google Sheet Folder**: [PLACEHOLDER - Add actual Google Sheet folder link here]
-- **Sheet ID**: [PASTE_YOUR_SHEET_ID_HERE] (as noted in credentials_index.md)
+- **SFA-Phase6 Google Sheet Folder**: https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/edit
+- **Sheet ID**: 1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms (as noted in credentials_index.md)
 
 ### Cloudinary
-- **Public Image URL**: [PLACEHOLDER - Add public Cloudinary image URL here]
+- **Public Image URL**: https://res.cloudinary.com/di9yqqagj/image/upload/v1/sample.jpg
 - **Cloud Name**: di9yqqagj
 
 ## Verification Notes

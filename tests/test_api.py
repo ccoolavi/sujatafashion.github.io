@@ -101,3 +101,43 @@ def test_create_inquiry_validation(client):
         "email": "john@example.com"
     })
     assert response.status_code == 422
+
+
+def test_upload_image_success(client):
+    """Should upload an image and return Cloudinary URL."""
+    import io
+    from unittest.mock import patch
+
+    mock_result = {
+        "secure_url": "https://res.cloudinary.com/di9yqqagj/image/upload/v1/sfa_assets/test.jpg",
+        "public_id": "sfa_assets/test",
+        "format": "jpg",
+        "width": 800,
+        "height": 600,
+    }
+
+    with patch("cloudinary.uploader.upload", return_value=mock_result):
+        test_file = io.BytesIO(b"fake-image-bytes")
+        test_file.name = "test.jpg"
+        response = client.post(
+            "/api/upload",
+            files={"file": ("test.jpg", test_file, "image/jpeg")},
+        )
+
+    assert response.status_code == 201
+    data = response.json()
+    assert data["url"] == mock_result["secure_url"]
+    assert data["public_id"] == mock_result["public_id"]
+    assert data["format"] == "jpg"
+
+
+def test_upload_image_rejects_non_image(client):
+    """Should reject non-image file uploads."""
+    import io
+
+    response = client.post(
+        "/api/upload",
+        files={"file": ("test.txt", io.BytesIO(b"not an image"), "text/plain")},
+    )
+    assert response.status_code == 400
+    assert "Only image files" in response.json()["detail"]

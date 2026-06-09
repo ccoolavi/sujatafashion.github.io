@@ -8,8 +8,8 @@ let currentProduct = null;
 // Initialize product page
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-    const productType = urlParams.get('type');
+    const productId = urlParams.get('id')?.trim();
+    const productType = urlParams.get('type')?.trim();
     
     console.log('Loading product:', productId, productType);
     
@@ -64,7 +64,7 @@ function parseAndFindProduct(data, type, targetId) {
     for (let row of rows) {
         if (!row || row.length === 0) continue;
         
-        const productId = row[0];
+        const productId = row[0]?.toString().trim();
         if (productId !== targetId) continue;
         
         let product = {};

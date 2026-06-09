@@ -1,11 +1,11 @@
 ---
 # Credentials Index (No Secrets)
 
-## Google Sheet ID
-- [PASTE_YOUR_SHEET_ID_HERE]
+## Google Sheet URL
+|- https://docs.google.com/spreadsheets/d/1JT5j6xifWkRcaeZIDzQjhB1RArzFEyqxSLQxnAObfms/
 
-## Cloudinary Cloud Name
-- di9yqqagj (Or your Cloudinary cloud name)
+## Cloudinary Sample Image URL
+|- https://res.cloudinary.com/di9yqqagj/image/upload/v1/sample.jpg
 
 ## Secret Storage
 - All API secrets (Cloudinary, Perplexity, Gemini) and Apps Script deployment ID are stored in the local password manager and NOT in the repository. Only their identifiers are documented here. See browser password manager for actual secrets.

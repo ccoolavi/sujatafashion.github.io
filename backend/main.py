@@ -1,10 +1,12 @@
 """Sujata Fashion Backend — Main API Application."""
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from datetime import timedelta
 import json
 import os
+import cloudinary
+import cloudinary.uploader
 
 from .config import settings
 from .database import get_connection, init_db
@@ -12,10 +14,12 @@ from .auth import (
     UserCreate, UserLogin, UserResponse, Token,
     InquiryCreate, InquiryResponse,
     TestimonialCreate, TestimonialResponse,
+    UploadResponse,
     verify_password, get_password_hash,
     create_access_token, decode_token,
     ACCESS_TOKEN_EXPIRE_MINUTES
 )
+from .utils.cloudinary_service import configure_cloudinary
 
 app = FastAPI(
     title=settings.app_name,
@@ -454,6 +458,45 @@ async def setup_admin():
         }
     finally:
         conn.close()
+
+
+# --- Cloudinary Image Upload Endpoint ---
+
+
+@app.post("/api/upload", status_code=201, response_model=UploadResponse)
+async def upload_image(file: UploadFile = File(...)):
+    """Upload an image file to Cloudinary and return the URL.
+
+    Accepts common image formats (JPEG, PNG, WebP, GIF).
+    Requires multipart/form-data with field name 'file'.
+    """
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only image files are accepted (JPEG, PNG, WebP, GIF)",
+        )
+
+    try:
+        configure_cloudinary()
+        contents = await file.read()
+        result = cloudinary.uploader.upload(
+            contents,
+            folder="sfa_assets",
+            public_id=None,
+            overwrite=True,
+        )
+        return UploadResponse(
+            url=result["secure_url"],
+            public_id=result["public_id"],
+            format=result.get("format"),
+            width=result.get("width"),
+            height=result.get("height"),
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Image upload failed: {str(e)}",
+        )
 
 
 # Serve static frontend files (for production deployment)
